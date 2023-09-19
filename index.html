@@ -31,9 +31,6 @@ SOFTWARE.
         <!--[if lt IE 9]>
             <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
-        <style>
-           
-        </style>
         <script>
             
             var pageURL;
@@ -61,28 +58,17 @@ SOFTWARE.
 	           }
             }
             
-            // get page from resource and load it into the iframe
-            function loadTargetPage(){
+        // get page from resource and load it into the iframe
+        function loadTargetPage(){
+            
+            if (useCustomInput){
+            
+                buildAttribution();
+                return;
+            }
 		let inputDiv = document.getElementById('customInputDiv');
 		let url = document.getElementById('targetURL').value;
-		if (!useCustomInput){
-			useCustomInput = !(url.includes('pressbooks') || url.includes('openstax'));
-		}
 		
-	    	if (useCustomInput){
-			
-			//If input field div is visible
-			if (inputDiv.style.display == 'block'){
-				buildAttribution();				
-			}
-		    	else
-			{
-		    		inputDiv.style.display = 'block';		    		
-	    		}
-
-			return;
-	    	}
-		inputDiv.style.display = 'none';
                 var page = document.getElementById('pageFrame');
                 page.style.display = "none";
                 document.getElementById("outputDiv").style.display = "none";
@@ -103,19 +89,30 @@ SOFTWARE.
                     })
                     .then(data => {
                          
-                        //page.style.display = "block";
                         page.setAttribute('srcdoc', data.contents);
-                        page.setAttribute('onLoad', 'buildAttribution();');
-                        //var buildButton = document.getElementById('buildBtn');
-                        //buildButton.style.display = "inline"; 
-                        
+                        page.setAttribute('onLoad', 'buildAttribution();');                       
                         
                     })
                 .catch(error =>{
                     page.style.display = "inline-block";
                     canvasDiv.style.display = "none";
                     page.setAttribute('srcdoc', "Something went wrong. Please try again.")});        
-            }             
+            }
+            
+            function isPressbooks()
+            {
+                var page = document.getElementById('pageFrame');
+                var elements = page.contentWindow.document.getElementsByTagName('*');
+                for (let i = 0; i < elements.length; i++){
+
+                    let classes = elements[i].getAttribute('class');
+                    
+                    if (classes && classes.includes("pressbooks")){
+                        return true;
+                    }                                     
+                }               
+                return false;                 
+            }
             
             // Create and display attribution for a Pressbooks resource
             function getPressbooksAttribution()
@@ -153,10 +150,9 @@ SOFTWARE.
                 return result;                  
             }
 
-                        // Create and display attribution for an OpenStax resource
-                        function getOpenStaxAttribution()
+            // Create and display attribution for an OpenStax resource
+            function getOpenStaxAttribution()
             {
-                console.log(pageURL);
                 let result = new Attribution(pageURL);
                 var page = document.getElementById('pageFrame');
                 var pageTitleElement = page.contentWindow.document.querySelector("[class^=\"BookBanner__BookChapter\"]");
@@ -194,27 +190,38 @@ SOFTWARE.
 		    return result;		    
 	    }
 		
-            
-            // This will eventually call the appropriate attribution building function
-            // based on selection from a dropdown menu
             function buildAttribution(){
                 
                 let attribution;
                 let outTxt = document.getElementById('resultTxt');
-		let targetURL = document.getElementById('targetURL').value;
+		        let targetURL = document.getElementById('targetURL').value;
+                let inputDiv = document.getElementById('customInputDiv');
                 
-	    	if (targetURL.includes('pressbooks'))
+	    	if (!useCustomInput && isPressbooks())
 	    	{
-			attribution = getPressbooksAttribution();                                 
+                inputDiv.style.display = 'none';
+			    attribution = getPressbooksAttribution();                                 
 	    	}
-	    	else if (targetURL.includes('openstax'))
+	    	else if (!useCustomInput && targetURL.includes('openstax'))
 	    	{
-                        attribution = getOpenStaxAttribution();
+                inputDiv.style.display = 'none';
+                attribution = getOpenStaxAttribution();
 	    	}
 	    	else
-		{
-			attribution = getCustomAttribution();
-		}
+		    {
+                useCustomInput = true;
+                canvasDiv.style.display = "none";
+                if (inputDiv.style.display == 'block'){
+				attribution = getCustomAttribution();				
+			     }
+		    	else
+			     {
+		    		inputDiv.style.display = 'block';
+                     return;
+	    		 }
+
+			         
+		    }
 		outTxt.value = `"<a href='${attribution.pageURL}'>${attribution.pageTitle}</a>" from <a href='${attribution.bookURL}'>${attribution.bookTitle}</a> by ${attribution.author} is licensed under a <a href='${attribution.licenseURL}'>${attribution.licenseType}</a>, except where otherwise noted.`;	    
                 console.log(attribution);
                 canvasDiv.style.display = "none";
@@ -328,12 +335,27 @@ SOFTWARE.
                 requestAnimationFrame(animate); 
             }
             // end of loading progress animation functions
+            
+            function startup(){
+                
+                document.getElementById("targetURL").addEventListener("keyup", (e)=>{
+                    
+                    if (e.key == "Enter"){
+                        loadTargetPage();
+                    }
+                })
+            }
+        
+            
+                
+            
 		
         </script>
         <style>
             body {
                 min-width: 250px;
-                background-color: #052402;
+                background-image: url(images/fanshawe_wallpaper.jpg);
+                
                 font-family: Arial, sans-serif;
             }
             
@@ -345,11 +367,11 @@ SOFTWARE.
                 width: 60%;
                 height: 77vh;
                 text-align: center;
-                background-color: beige;
+                background-color: #f7f5f5;
                 display: inline-block;
                 text-align: center;
                 margin-left: 20%;
-                margin-top: 10vh;
+                margin-top: 1vh;
                 border-radius: 25px;
             }
             
@@ -370,7 +392,16 @@ SOFTWARE.
             
             footer a {
                 
-                color: pink;
+                color: white;
+            }
+            
+            #logo {
+                width: 74px;
+            }
+            
+            #logo-div{
+                text-align: center;
+                margin-top: 2vh;
             }
             
             #resultTxtCopyRes{
@@ -379,7 +410,8 @@ SOFTWARE.
             
         </style>
     </head>
-    <body>
+    <body onload="startup();">
+        
         <div class="wrap">
             <h1>AttributionBuilder</h1>
             <div class="child">
@@ -417,7 +449,6 @@ SOFTWARE.
             </div>
 
             <div id="outputDiv" style="display: none;" class="child">
-                <!--<button id="buildBtn" style="display:none;" onclick="buildAttribution();">Build Attribution</button>-->
                 <textarea id="resultTxt" rows="4" cols="50"></textarea>
                 <div>
                     <button id="copyBtn" onclick="copy('resultTxt')">Copy to clipboard</button>
@@ -427,8 +458,11 @@ SOFTWARE.
                 
             </div>
         </div>
+        <div id="logo-div">
+            <img id= "logo" src="images/oer_logo.png" />
+        </div>       
         <footer>
-            <div>AttributionBuilder by Jason Benoit and David Giesbrecht is open source software made available under the <a href="https://choosealicense.com/licenses/mit/">MIT License</a>.
+            <div>AttributionBuilder by Jason Benoit, David Giesbrecht and the Fanshawe OER Design Studio is open source software made available under the <a href="https://choosealicense.com/licenses/mit/">MIT License</a>.
             </div>
             <div>
                 Progress animation is based on <a href="https://codepen.io/rachsmith/pen/kOvmKq">work by Rachel Smith</a> made available under the <a href="https://choosealicense.com/licenses/mit/">MIT License</a>.
