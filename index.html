@@ -130,9 +130,11 @@ SOFTWARE.
                     result.licenseType = anchorTags[i].innerHTML;
                 }
             }
-
+            
             var title = doc.getElementsByTagName('title')[0].innerHTML;
-            result.pageTitle = title.substr(0, title.indexOf(` - ${result.bookTitle}`));
+            result.bookTitle = result.bookTitle.replaceAll(/[-–—]/g, '-');
+            title = title.replaceAll(/[-–—]/g, '-');
+            result.pageTitle = title.substr(0, title.indexOf(result.bookTitle) - 3);
 
             var spans = doc.getElementsByTagName('span');
 
