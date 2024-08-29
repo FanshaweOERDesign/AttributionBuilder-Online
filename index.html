@@ -132,7 +132,7 @@ SOFTWARE.
             }
 
             var title = doc.getElementsByTagName('title')[0].innerHTML;
-            result.pageTitle = title.substr(0, title.indexOf(result.bookTitle) - 3);
+            result.pageTitle = title.substr(0, title.indexOf(` - ${result.bookTitle}`);
 
             var spans = doc.getElementsByTagName('span');
 
