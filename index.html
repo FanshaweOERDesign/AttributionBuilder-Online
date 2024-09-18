@@ -63,6 +63,29 @@ SOFTWARE.
             }
         }
 
+        function loadHtmlInIframeAndExtract(htmlString, callback) {
+  // Create an invisible iframe to load the HTML
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none'; // Hide the iframe
+  document.body.appendChild(iframe);
+  
+  // Load the HTML string into the iframe
+  const idoc = iframe.contentDocument || iframe.contentWindow.document;
+  idoc.open();
+  idoc.write(htmlString);
+  idoc.close();
+  
+  // Wait for the iframe to finish loading and scripts to execute
+  iframe.onload = function() {
+    // Perform DOM queries on the iframe's contentDocument
+    
+    callback(iframe.contentDocument);
+    
+    // Optionally remove the iframe when done
+    document.body.removeChild(iframe);
+  };
+}
+
         // get page from resource and load it
         function loadTargetPage() {
 
@@ -90,28 +113,12 @@ SOFTWARE.
                     throw new Error('Network response was not ok.')
                 })
                 .then(data => {
-                    // Create a Blob with the text content
-    const blob = new Blob([data.contents], { type: 'text/plain' });
-    const filename = "pagedata.txt";
-    // Create a link element
-    const link = document.createElement('a');
-    
-    // Create a URL for the Blob and set it as the href of the link
-    link.href = URL.createObjectURL(blob);
-    
-    // Set the download attribute with the filename
-    link.download = filename;
-    
-    // Append the link to the document body (necessary for Firefox)
-    document.body.appendChild(link);
-    
-    // Simulate a click on the link to trigger the download
-    link.click();
-    
-    // Remove the link from the document
-    document.body.removeChild(link);
-                    doc = parser.parseFromString(data.contents, 'text/html');
-                    buildAttribution();
+                    
+                    //doc = parser.parseFromString(data.contents, 'text/html');
+                    loadHtmlInIframeAndExtract(data.contents, (extractedDoc)=>{
+                        doc = extractedDoc;
+                        buildAttribution();
+                    });
                 })
                 .catch(error => {
                     errorDiv.innerText = 'Something went wrong. Please try again.'
