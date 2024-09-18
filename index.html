@@ -63,26 +63,53 @@ SOFTWARE.
             }
         }
 
-        function loadHtmlInIframeAndExtract(htmlString, callback) {
+      function loadHtmlInIframeAndQueryDom(htmlString, corsProxy, callback) {
   // Create an invisible iframe to load the HTML
   const iframe = document.createElement('iframe');
   iframe.style.display = 'none'; // Hide the iframe
   document.body.appendChild(iframe);
   
-  // Load the HTML string into the iframe
   const idoc = iframe.contentDocument || iframe.contentWindow.document;
+  
+  // Load the HTML string into the iframe
   idoc.open();
   idoc.write(htmlString);
   idoc.close();
   
-  // Wait for the iframe to finish loading and scripts to execute
+  // Override fetch and XMLHttpRequest in the iframe
   iframe.onload = function() {
-    // Perform DOM queries on the iframe's contentDocument
+    const iframeWindow = iframe.contentWindow;
     
-    callback(iframe.contentDocument);
-    
-    // Optionally remove the iframe when done
-    document.body.removeChild(iframe);
+    // Override fetch in the iframe
+    const originalFetch = iframeWindow.fetch;
+    iframeWindow.fetch = function(url, options) {
+      if (!url.startsWith(iframeWindow.location.origin)) {
+        url = corsProxy + url; // Prepend CORS proxy to external URLs
+      }
+      return originalFetch(url, options);
+    };
+
+    // Override XMLHttpRequest in the iframe
+    const originalXHROpen = iframeWindow.XMLHttpRequest.prototype.open;
+    iframeWindow.XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+      if (!url.startsWith(iframeWindow.location.origin)) {
+        url = corsProxy + url; // Prepend CORS proxy to external URLs
+      }
+      return originalXHROpen.apply(this, arguments);
+    };
+
+    // Wait for all resources and scripts to load in the iframe
+    iframe.onload = function() {
+      // Perform DOM queries on the iframe's contentDocument
+      const iframeDocument = iframe.contentDocument;
+      //const generatedHtml = iframeDocument.documentElement.outerHTML;
+      
+      // Pass the generated HTML and iframeDocument to the callback for DOM queries
+      callback(iframeDocument);
+
+      // Optionally remove the iframe after processing
+      document.body.removeChild(iframe);
+    };
   };
 }
 
@@ -115,7 +142,7 @@ SOFTWARE.
                 .then(data => {
                     
                     //doc = parser.parseFromString(data.contents, 'text/html');
-                    loadHtmlInIframeAndExtract(data.contents, (extractedDoc)=>{
+                    loadHtmlInIframeAndQueryDom(data.contents, "https://api.allorigins.win/get?url=", (extractedDoc)=>{
                         doc = extractedDoc;
                         buildAttribution();
                     });
