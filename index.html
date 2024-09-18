@@ -93,6 +93,7 @@ SOFTWARE.
                 .then(data => {
                     
                     doc = parser.parseFromString(data.contents, 'text/html');
+                    buildAttribution();
                     // loadHtmlInIframeAndQueryDom(data.contents, "https://api.allorigins.win/get?url=", (extractedDoc)=>{
                     //     doc = extractedDoc;
                     //     buildAttribution();
