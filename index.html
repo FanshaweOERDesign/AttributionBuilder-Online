@@ -92,17 +92,8 @@ SOFTWARE.
                 })
                 .then(data => {
                     
-                    //doc = parser.parseFromString(data.contents, 'text/html');
-                    const iframe = document.createElement("iframe");
-                    document.body.appendChild(iframe);
-                    const idoc = iframe.contentDocument || iframe.contentWindow.document;
-                    idoc.open();
-                    idoc.write(data.contents);
-                    idoc.close();
-                    doc = idoc;
+                    doc = parser.parseFromString(data.contents, 'text/html');
                     buildAttribution();
-                    
-                    
                 })
                 .catch(error => {
                     errorDiv.innerText = 'Something went wrong. Please try again.'
