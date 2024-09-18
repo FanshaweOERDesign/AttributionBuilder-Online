@@ -102,10 +102,9 @@ SOFTWARE.
   idoc.open();
   idoc.write(data.contents);
   idoc.close();
-                    doc = idoc.documentElement;
-                    document.body.removeChild(iframe);
-                    console.log(doc.outerHTML);
+                    doc = idoc;
                     buildAttribution();
+                    document.body.removeChild(iframe);
                     
                 })
                 .catch(error => {
