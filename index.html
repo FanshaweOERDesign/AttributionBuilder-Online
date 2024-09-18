@@ -92,10 +92,7 @@ SOFTWARE.
                 })
                 .then(data => {
                     
-                    //doc = parser.parseFromString(data.contents, 'text/html');
-                    const pageFrame = document.getElementById("pageFrame");
-                    pageFrame.setAttribute('srcdoc', data.contents);
-                    doc = pageFrame.contentWindow.document;
+                    doc = parser.parseFromString(data.contents, 'text/html');
                     buildAttribution();
                 })
                 .catch(error => {
