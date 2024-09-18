@@ -212,6 +212,7 @@ SOFTWARE.
                 attribution = getOpenStaxAttribution();
             }
             else if (!useCustomInput && isYouTubeVideo()) {
+                console.log("Is YouTube! Line 215");
                 const attribution = getVideoAttribution()
                 const output = `<p>Video: "<a href="${attribution.videoURL}">${attribution.videoTitle}</a>" by <a href="${attribution.channelURL}">${attribution.channelTitle}</a> [${attribution.duration}] is licensed under the <a href="https://www.youtube.com/static?template=terms">Standard YouTube License</a>.<em>Transcript and closed captions available on YouTube.</em></p>`;
                 document.getElementById('loading-dots').style.display = "none";
@@ -246,10 +247,15 @@ SOFTWARE.
          */
         function getVideoAttribution() {
             const title = doc.querySelector('meta[name="title"]').getAttribute('content');
+            console.log(`Title: ${title} - line 250`);
             const channel = doc.querySelector('link[itemprop="name"]').getAttribute('content');
+            console.log(`Channel: ${channel} - line 252`);
             const channelUrl = doc.querySelector('span[itemprop="author"] link[itemprop="url"]').getAttribute('href');
+            console.log(`ChannelURL: ${channelUrl} - line 254`);
             const durationMeta = doc.querySelector('meta[itemprop="duration"]').getAttribute('content');
+            console.log(`Duration Meta: ${durationMeta} - line 256`);
             const duration = formatDuration(durationMeta);
+            console.log(`Duration: ${duration} - line 258`);
 
             const attribution = new VideoAttribution();
             attribution.videoURL = pageURL;
