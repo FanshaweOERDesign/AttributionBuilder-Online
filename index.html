@@ -86,7 +86,7 @@ SOFTWARE.
             // to get around CORS being disabled on the target server
             fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(pageURL)}`)
                 .then(response => {
-                    console.log(`Response.ok: ${response.ok});
+                    console.log(`Response.ok: ${response.ok}`);
                     if (response.ok) return response.json()
                     throw new Error('Network response was not ok.')
                 })
