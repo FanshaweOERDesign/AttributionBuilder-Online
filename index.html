@@ -92,12 +92,21 @@ SOFTWARE.
                 })
                 .then(data => {
                     
-                    doc = parser.parseFromString(data.contents, 'text/html');
+                    //doc = parser.parseFromString(data.contents, 'text/html');
+                    const iframe = document.createElement('iframe');
+                    iframe.style.visibility = "hidden";
+  document.body.appendChild(iframe);
+  const idoc = iframe.contentDocument || iframe.contentWindow.document;
+
+  // Inject the HTML into the iframe
+  idoc.open();
+  idoc.write(data.contents);
+  idoc.close();
+                    doc = idoc.documentElement;
+                    document.body.removeChild(iframe);
+                    console.log(doc.outerHTML);
                     buildAttribution();
-                    // loadHtmlInIframeAndQueryDom(data.contents, "https://api.allorigins.win/get?url=", (extractedDoc)=>{
-                    //     doc = extractedDoc;
-                    //     buildAttribution();
-                    // });
+                    
                 })
                 .catch(error => {
                     errorDiv.innerText = 'Something went wrong. Please try again.'
