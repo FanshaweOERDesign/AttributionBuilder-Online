@@ -247,8 +247,8 @@ SOFTWARE.
          * @return {Object} - An object containing video attribution details.
          */
         function getVideoAttribution() {
-            const title = doc.querySelector('meta[name="title"]').getAttribute('content');
-            console.log(`Title: ${title} - line 250`);
+            //const title = doc.querySelector('meta[name="title"]').getAttribute('content');
+            //console.log(`Title: ${title ? title : "Title is null or undefined"} - line 250`);
             const channel = doc.querySelector('link[itemprop="name"]').getAttribute('content');
             console.log(`Channel: ${channel} - line 252`);
             const channelUrl = doc.querySelector('span[itemprop="author"] link[itemprop="url"]').getAttribute('href');
