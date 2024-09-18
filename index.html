@@ -95,7 +95,7 @@ SOFTWARE.
                     //doc = parser.parseFromString(data.contents, 'text/html');
                     const pageFrame = document.getElementById("pageFrame");
                     pageFrame.setAttribute('srcdoc', data.contents);
-                    doc = pageFrame.contentDocument || pageFrame.contentWindow.document;
+                    doc = pageFrame.contentWindow.document;
                     buildAttribution();
                 })
                 .catch(error => {
