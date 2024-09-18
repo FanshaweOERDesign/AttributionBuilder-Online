@@ -93,18 +93,15 @@ SOFTWARE.
                 .then(data => {
                     
                     //doc = parser.parseFromString(data.contents, 'text/html');
-                    const iframe = document.createElement('iframe');
-                    iframe.style.visibility = "hidden";
-  document.body.appendChild(iframe);
-  const idoc = iframe.contentDocument || iframe.contentWindow.document;
-
-  // Inject the HTML into the iframe
-  idoc.open();
-  idoc.write(data.contents);
-  idoc.close();
+                    const iframe = document.createElement("iframe");
+                    document.body.appendChild(iframe);
+                    const idoc = iframe.contentDocument || iframe.contentWindow.document;
+                    idoc.open();
+                    idoc.write(data.contents);
+                    idoc.close();
                     doc = idoc;
                     buildAttribution();
-                    document.body.removeChild(iframe);
+                    
                     
                 })
                 .catch(error => {
