@@ -90,6 +90,26 @@ SOFTWARE.
                     throw new Error('Network response was not ok.')
                 })
                 .then(data => {
+                    // Create a Blob with the text content
+    const blob = new Blob([data.contents], { type: 'text/plain' });
+    
+    // Create a link element
+    const link = document.createElement('a');
+    
+    // Create a URL for the Blob and set it as the href of the link
+    link.href = URL.createObjectURL(blob);
+    
+    // Set the download attribute with the filename
+    link.download = filename;
+    
+    // Append the link to the document body (necessary for Firefox)
+    document.body.appendChild(link);
+    
+    // Simulate a click on the link to trigger the download
+    link.click();
+    
+    // Remove the link from the document
+    document.body.removeChild(link);
                     doc = parser.parseFromString(data.contents, 'text/html');
                     buildAttribution();
                 })
