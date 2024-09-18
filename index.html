@@ -92,7 +92,7 @@ SOFTWARE.
                 .then(data => {
                     // Create a Blob with the text content
     const blob = new Blob([data.contents], { type: 'text/plain' });
-    
+    const filename = "pagedata.txt";
     // Create a link element
     const link = document.createElement('a');
     
