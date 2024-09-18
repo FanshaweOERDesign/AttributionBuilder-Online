@@ -141,11 +141,11 @@ SOFTWARE.
                 })
                 .then(data => {
                     
-                    //doc = parser.parseFromString(data.contents, 'text/html');
-                    loadHtmlInIframeAndQueryDom(data.contents, "https://api.allorigins.win/get?url=", (extractedDoc)=>{
-                        doc = extractedDoc;
-                        buildAttribution();
-                    });
+                    doc = parser.parseFromString(data.contents, 'text/html');
+                    // loadHtmlInIframeAndQueryDom(data.contents, "https://api.allorigins.win/get?url=", (extractedDoc)=>{
+                    //     doc = extractedDoc;
+                    //     buildAttribution();
+                    // });
                 })
                 .catch(error => {
                     errorDiv.innerText = 'Something went wrong. Please try again.'
