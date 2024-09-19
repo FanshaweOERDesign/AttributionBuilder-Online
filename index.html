@@ -132,6 +132,9 @@ SOFTWARE.
         }
 
         function isPressbooks() {
+            if (!doc){
+                return false;
+            }
             var elements = doc.getElementsByTagName('*');
             for (let i = 0; i < elements.length; i++) {
 
