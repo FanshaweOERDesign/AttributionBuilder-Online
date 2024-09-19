@@ -229,8 +229,7 @@ SOFTWARE.
             // if (pageURL.includes('youtube.com/watch?')){
             //     return true;
             // }
-            const regExp = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/|user\/(?:[^#&?]+).+|(?:[^#&?]+\/)?v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})
-/;
+            const regExp = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/|user\/(?:[^#&?]+).+|(?:[^#&?]+\/)?v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
             const match = pageURL.match(regExp);
             return (match && match[2].length === 11) ? match[2] : null;
         }
