@@ -110,9 +110,9 @@ SOFTWARE.
                 let ytID;
                 if (lastSlash === pageURL.length - 1){
                     let truncPageURL = pageURL.substring(0, lastSlash);
-                    ytID = hasDot ? truncPage.substring(truncPage.lastIndexOf('/') + 1, hasInterro ? truncPage.indexOf('?') : null) : truncPageURL.substring(idStart);
+                    ytID = hasDot ? truncPageURL.substring(truncPageURL.lastIndexOf('/') + 1, hasInterro ? truncPageURL.indexOf('?') : null) : truncPageURL.substring(idStart);
                 } else {
-                    ytID = hasDot ? pageURL.substring(lastSlash + 1, hasInterro ? truncPage.indexOf('?') : null) : pageURL.substring(idStart);
+                    ytID = hasDot ? pageURL.substring(lastSlash + 1, hasInterro ? pageURL.indexOf('?') : null) : pageURL.substring(idStart);
                 }
                 fetch(`https://www.googleapis.com/youtube/v3/videos?id=${ytID}&key=AIzaSyDtSVJTrY58QpW8xf3tO72OoHz-drJFlyI&part=snippet,contentDetails`)
                 .then(response => {
