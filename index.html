@@ -292,7 +292,7 @@ SOFTWARE.
             // const duration = formatDuration(durationMeta);
             const title = data.items[0].snippet.title;
             const channel = data.items[0].snippet.channelTitle;
-            const channelUrl = `https://www.youtube.com/channel/${data.items[0].snipped.channelId}`;
+            const channelUrl = `https://www.youtube.com/channel/${data.items[0].snippet.channelId}`;
             const duration = formatDuration(data.items[0].contentDetails.duration);
 
             const attribution = new VideoAttribution();
