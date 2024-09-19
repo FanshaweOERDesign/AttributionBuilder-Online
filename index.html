@@ -120,6 +120,7 @@ SOFTWARE.
                 .then(data => {
 
                     console.info("Video data: % o", data);
+                    buildAttribution(data);
                 })
                 .catch(error => {
                     errorDiv.innerText = 'Something went wrong. Please try again.'
