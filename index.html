@@ -84,6 +84,7 @@ SOFTWARE.
 
             // note that the page is being fetched through the allorigins proxy server API
             // to get around CORS being disabled on the target server
+            if (!isYouTubeVideo()){
             fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(pageURL)}`)
                 .then(response => {
                     console.log(`Response.ok: ${response.ok}`);
@@ -94,6 +95,31 @@ SOFTWARE.
                     
                     doc = parser.parseFromString(data.contents, 'text/html');
                     buildAttribution();
+                })
+                .catch(error => {
+                    errorDiv.innerText = 'Something went wrong. Please try again.'
+                    errorDiv.style.display = 'block';
+                    loadingDiv.style.display = "none";
+                    console.log(`Error: ${error}`);
+                });
+            } else {
+                let lastSlash = pageURL.lastIndexOf('/');
+                let ytID;
+                if (lastSlash === pageURL.length - 1){
+                    let truncPageURL = pageURL.substring(0, lastSlash);
+                    lastSlash = truncPageURL.lastIndexOf('/');
+                    ytID = truncPageURL.substring(lastSlash + 1);
+                } else {
+                    ytID = pageURL.substring(lastSlash + 1);
+                }
+                fetch(`https://www.googleapis.com/youtube/v3/videos?id=${ytID}&key=AIzaSyDtSVJTrY58QpW8xf3tO72OoHz-drJFlyI&part=snippet,contentDetails`)
+                .then(response => {
+                    if (response.ok) return response.json()
+                    throw new Error('Network response was not ok.')
+                })
+                .then(data => {
+
+                    console.info("Video data: % o", data);
                 })
                 .catch(error => {
                     errorDiv.innerText = 'Something went wrong. Please try again.'
