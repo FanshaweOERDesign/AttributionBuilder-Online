@@ -104,13 +104,14 @@ SOFTWARE.
                 });
             } else {
                 let lastSlash = pageURL.lastIndexOf('/');
+                let hasDot = pageURL.includes('youtu.be');
                 let idStart = pageURL.indexOf('v=') + 2;
                 let ytID;
                 if (lastSlash === pageURL.length - 1){
                     let truncPageURL = pageURL.substring(0, lastSlash);
-                    ytID = truncPageURL.substring(idStart);
+                    ytID = hasDot ? truncPage.substring(truncPage.lastIndexOf('/') + 1) : truncPageURL.substring(idStart);
                 } else {
-                    ytID = pageURL.substring(idStart);
+                    ytID = hasDot ? pageURL.substring(lastSlash + 1) : pageURL.substring(idStart);
                 }
                 fetch(`https://www.googleapis.com/youtube/v3/videos?id=${ytID}&key=AIzaSyDtSVJTrY58QpW8xf3tO72OoHz-drJFlyI&part=snippet,contentDetails`)
                 .then(response => {
