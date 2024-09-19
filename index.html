@@ -279,15 +279,15 @@ SOFTWARE.
          * @return {Object} - An object containing video attribution details.
          */
         function getVideoAttribution(data) {
-            const title = doc.querySelector('meta[name="title"]').getAttribute('content');
-            const channel = doc.querySelector('link[itemprop="name"]').getAttribute('content');
-            const channelUrl = doc.querySelector('span[itemprop="author"] link[itemprop="url"]').getAttribute('href');
-            const durationMeta = doc.querySelector('meta[itemprop="duration"]').getAttribute('content');
-            const duration = formatDuration(durationMeta);
-            // const title = data.items[0].snippet.title;
-            // const channel = data.items[0].snippet.channelTitle;
-            // const channelUrl = `https://www.youtube.com/channel/${data.items[0].snippet.channelId}`;
-            // const duration = formatDuration(data.items[0].contentDetails.duration);
+            // const title = doc.querySelector('meta[name="title"]').getAttribute('content');
+            // const channel = doc.querySelector('link[itemprop="name"]').getAttribute('content');
+            // const channelUrl = doc.querySelector('span[itemprop="author"] link[itemprop="url"]').getAttribute('href');
+            // const durationMeta = doc.querySelector('meta[itemprop="duration"]').getAttribute('content');
+            // const duration = formatDuration(durationMeta);
+            const title = data.items[0].snippet.title;
+            const channel = data.items[0].snippet.channelTitle;
+            const channelUrl = `https://www.youtube.com/channel/${data.items[0].snippet.channelId}`;
+            const duration = formatDuration(data.items[0].contentDetails.duration);
 
             const attribution = new VideoAttribution();
             attribution.videoURL = pageURL;
