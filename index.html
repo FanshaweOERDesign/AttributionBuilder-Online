@@ -222,7 +222,7 @@ SOFTWARE.
          * @return {string|null} - The YouTube video ID if the URL is valid, otherwise null.
          */
         function isYouTubeVideo() {
-            if (pageURL.includes('youtube.com/?'){
+            if (pageURL.includes('youtube.com/?')){
                 return true;
             }
             const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|watch\?.+&v=)([^#\&\?]*).*/;
