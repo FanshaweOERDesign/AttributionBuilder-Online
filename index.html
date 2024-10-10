@@ -84,15 +84,12 @@ SOFTWARE.
 
             // note that the page is being fetched through the allorigins proxy server API
             // to get around CORS being disabled on the target server
-            if (!isYouTubeVideo()){
             fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(pageURL)}`)
                 .then(response => {
-                    console.log(`Response.ok: ${response.ok}`);
                     if (response.ok) return response.json()
                     throw new Error('Network response was not ok.')
                 })
                 .then(data => {
-                    
                     doc = parser.parseFromString(data.contents, 'text/html');
                     buildAttribution();
                 })
@@ -100,43 +97,10 @@ SOFTWARE.
                     errorDiv.innerText = 'Something went wrong. Please try again.'
                     errorDiv.style.display = 'block';
                     loadingDiv.style.display = "none";
-                    console.log(`Error: ${error}`);
                 });
-            } else {
-                let lastSlash = pageURL.lastIndexOf('/');
-                let hasDot = pageURL.includes('youtu.be');
-                let hasInterro = pageURL.includes('?');
-                let idStart = pageURL.indexOf('v=') + 2;
-                let ytID;
-                if (lastSlash === pageURL.length - 1){
-                    let truncPageURL = pageURL.substring(0, lastSlash);
-                    ytID = hasDot ? truncPageURL.substring(truncPageURL.lastIndexOf('/') + 1, hasInterro ? truncPageURL.indexOf('?') : null) : truncPageURL.substring(idStart);
-                } else {
-                    ytID = hasDot ? pageURL.substring(lastSlash + 1, hasInterro ? pageURL.indexOf('?') : null) : pageURL.substring(idStart);
-                }
-                fetch(`https://www.googleapis.com/youtube/v3/videos?id=${ytID}&key=AIzaSyDtSVJTrY58QpW8xf3tO72OoHz-drJFlyI&part=snippet,contentDetails`)
-                .then(response => {
-                    if (response.ok) return response.json()
-                    throw new Error('Network response was not ok.')
-                })
-                .then(data => {
-
-                    console.info("Video data: %o", data);
-                    buildAttribution(data);
-                })
-                .catch(error => {
-                    errorDiv.innerText = 'Something went wrong. Please try again.'
-                    errorDiv.style.display = 'block';
-                    loadingDiv.style.display = "none";
-                    console.log(`Error: ${error}`);
-                });
-            }
         }
 
         function isPressbooks() {
-            if (!doc){
-                return false;
-            }
             var elements = doc.getElementsByTagName('*');
             for (let i = 0; i < elements.length; i++) {
 
@@ -153,6 +117,28 @@ SOFTWARE.
         function getPressbooksAttribution() {
             console.log(pageURL);
             let result = new Attribution(pageURL);
+            let metaTags = doc.getElementsByTagName('meta');
+            for (let i = 0; i < metaTags.length; i++) {
+                if (metaTags[i].getAttribute('name') === "citation_title") {
+                    result.pageTitle = metaTags[i].getAttribute('content');
+                }
+                else if (metaTags[i].getAttribute('name') === "citation_book_title") {
+                    result.bookTitle = metaTags[i].getAttribute('content');
+                }
+                else if (metaTags[i].getAttribute('name') === "citation_author") {
+                    result.author = metaTags[i].getAttribute('content');
+                }
+            }
+
+            if (pageURL.includes('chapter')){
+                result.bookURL = pageURL.substr(0, pageURL.lastIndexOf('/chapter')) + '/';
+            }
+            else
+            {
+                result.bookURL = pageURL;
+            }
+            
+
             var anchorTags = doc.getElementsByTagName('a');
 
             for (let i = 0; i < anchorTags.length; i++) {
@@ -160,6 +146,7 @@ SOFTWARE.
                 if (anchorTags[i].getAttribute('rel') === "cc:attributionURL") {
                     result.bookURL = anchorTags[i].getAttribute('href');
                     result.bookTitle = anchorTags[i].innerHTML;
+                    result.bookTitle = result.bookTitle.replaceAll(/[-–—]/g, '-');
                 }
                 else if (anchorTags[i].getAttribute('rel') === "license") {
                     result.licenseURL = anchorTags[i].getAttribute('href');
@@ -167,24 +154,20 @@ SOFTWARE.
                 }
             }
 
-            
-            var title = doc.getElementsByTagName('title')[0].innerHTML;
-             title = title.replaceAll(/[-–—]/g, '-');
-            if (result.bookTitle){
-                result.bookTitle = result.bookTitle.replaceAll(/[-–—]/g, '-');
-            } else {
-                result.bookTitle = title.substr(title.indexOf(" - ") + 3);
+            if (!result.pageTitle) {
+                result.pageTitle = doc.getElementsByTagName('title')[0].innerHTML;
+                result.pageTitle = result.pageTitle.substr(0, title.indexOf(result.bookTitle) - 3);
             }
             
-            result.pageTitle = title.substr(0, title.indexOf(result.bookTitle) - 3);
+            if (!result.author) {
+                var spans = doc.getElementsByTagName('span');
 
-            var spans = doc.getElementsByTagName('span');
+                for (let i = 0; i < spans.length; i++) {
 
-            for (let i = 0; i < spans.length; i++) {
+                    if (spans[i].getAttribute('property') === "cc:attributionName") {
 
-                if (spans[i].getAttribute('property') === "cc:attributionName") {
-
-                    result.author = spans[i].innerHTML;
+                        result.author = spans[i].innerHTML;
+                    }
                 }
             }
 
@@ -233,11 +216,12 @@ SOFTWARE.
          * @return {string|null} - The YouTube video ID if the URL is valid, otherwise null.
          */
         function isYouTubeVideo() {
-            const regExp = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/|user\/(?:[^#&?]+).+|(?:[^#&?]+\/)?v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-            return pageURL.match(regExp);        
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|watch\?.+&v=)([^#\&\?]*).*/;
+            const match = pageURL.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
         }
 
-        function buildAttribution(data) {
+        function buildAttribution() {
 
             let attribution;
             let outTxt = document.getElementById('resultTxt');
@@ -253,8 +237,7 @@ SOFTWARE.
                 attribution = getOpenStaxAttribution();
             }
             else if (!useCustomInput && isYouTubeVideo()) {
-                console.log("Is YouTube! Line 215");
-                const attribution = getVideoAttribution(data)
+                const attribution = getVideoAttribution()
                 const output = `<p>Video: "<a href="${attribution.videoURL}">${attribution.videoTitle}</a>" by <a href="${attribution.channelURL}">${attribution.channelTitle}</a> [${attribution.duration}] is licensed under the <a href="https://www.youtube.com/static?template=terms">Standard YouTube License</a>.<em>Transcript and closed captions available on YouTube.</em></p>`;
                 document.getElementById('loading-dots').style.display = "none";
                 document.getElementById("error").style.display = "none";
@@ -286,16 +269,12 @@ SOFTWARE.
          * Extracts video details from the fetched data.
          * @return {Object} - An object containing video attribution details.
          */
-        function getVideoAttribution(data) {
-            // const title = doc.querySelector('meta[name="title"]').getAttribute('content');
-            // const channel = doc.querySelector('link[itemprop="name"]').getAttribute('content');
-            // const channelUrl = doc.querySelector('span[itemprop="author"] link[itemprop="url"]').getAttribute('href');
-            // const durationMeta = doc.querySelector('meta[itemprop="duration"]').getAttribute('content');
-            // const duration = formatDuration(durationMeta);
-            const title = data.items[0].snippet.title;
-            const channel = data.items[0].snippet.channelTitle;
-            const channelUrl = `https://www.youtube.com/channel/${data.items[0].snippet.channelId}`;
-            const duration = formatDuration(data.items[0].contentDetails.duration);
+        function getVideoAttribution() {
+            const title = doc.querySelector('meta[name="title"]').getAttribute('content');
+            const channel = doc.querySelector('link[itemprop="name"]').getAttribute('content');
+            const channelUrl = doc.querySelector('span[itemprop="author"] link[itemprop="url"]').getAttribute('href');
+            const durationMeta = doc.querySelector('meta[itemprop="duration"]').getAttribute('content');
+            const duration = formatDuration(durationMeta);
 
             const attribution = new VideoAttribution();
             attribution.videoURL = pageURL;
@@ -340,7 +319,7 @@ SOFTWARE.
         body {
             min-width: 250px;
             background-image: url(images/fanshawe_wallpaper.jpg);
-            background-size: cover;
+
             font-family: Arial, sans-serif;
         }
 
@@ -448,7 +427,6 @@ SOFTWARE.
         <div class="child">
             <input type="text" id="targetURL" size="50" onfocus="this.select();"
                 style="font-size: 1rem; max-width: 80%;" placeholder="Enter target URL" />
-            <iframe id="pageFrame" style='display: none;'></iframe>
         </div>
         <div id='customInputDiv' style='display: none;'>
             <div>
