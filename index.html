@@ -153,6 +153,28 @@ SOFTWARE.
         function getPressbooksAttribution() {
             console.log(pageURL);
             let result = new Attribution(pageURL);
+            let metaTags = doc.getElementsByTagName('meta');
+            for (let i = 0; i < metaTags.length; i++) {
+                if (metaTags[i].getAttribute('name') === "citation_title") {
+                    result.pageTitle = metaTags[i].getAttribute('content');
+                }
+                else if (metaTags[i].getAttribute('name') === "citation_book_title") {
+                    result.bookTitle = metaTags[i].getAttribute('content');
+                }
+                else if (metaTags[i].getAttribute('name') === "citation_author") {
+                    result.author = metaTags[i].getAttribute('content');
+                }
+            }
+
+            if (pageURL.includes('chapter')){
+                result.bookURL = pageURL.substr(0, pageURL.lastIndexOf('/chapter')) + '/';
+            }
+            else
+            {
+                result.bookURL = pageURL;
+            }
+            
+
             var anchorTags = doc.getElementsByTagName('a');
 
             for (let i = 0; i < anchorTags.length; i++) {
@@ -160,6 +182,7 @@ SOFTWARE.
                 if (anchorTags[i].getAttribute('rel') === "cc:attributionURL") {
                     result.bookURL = anchorTags[i].getAttribute('href');
                     result.bookTitle = anchorTags[i].innerHTML;
+                    result.bookTitle = result.bookTitle.replaceAll(/[-–—]/g, '-');
                 }
                 else if (anchorTags[i].getAttribute('rel') === "license") {
                     result.licenseURL = anchorTags[i].getAttribute('href');
@@ -167,24 +190,20 @@ SOFTWARE.
                 }
             }
 
-            
-            var title = doc.getElementsByTagName('title')[0].innerHTML;
-             title = title.replaceAll(/[-–—]/g, '-');
-            if (result.bookTitle){
-                result.bookTitle = result.bookTitle.replaceAll(/[-–—]/g, '-');
-            } else {
-                result.bookTitle = title.substr(title.indexOf(" - ") + 3);
+            if (!result.pageTitle) {
+                result.pageTitle = doc.getElementsByTagName('title')[0].innerHTML;
+                result.pageTitle = result.pageTitle.substr(0, title.indexOf(result.bookTitle) - 3);
             }
             
-            result.pageTitle = title.substr(0, title.indexOf(result.bookTitle) - 3);
+            if (!result.author) {
+                var spans = doc.getElementsByTagName('span');
 
-            var spans = doc.getElementsByTagName('span');
+                for (let i = 0; i < spans.length; i++) {
 
-            for (let i = 0; i < spans.length; i++) {
+                    if (spans[i].getAttribute('property') === "cc:attributionName") {
 
-                if (spans[i].getAttribute('property') === "cc:attributionName") {
-
-                    result.author = spans[i].innerHTML;
+                        result.author = spans[i].innerHTML;
+                    }
                 }
             }
 
