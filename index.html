@@ -166,10 +166,16 @@ SOFTWARE.
                     result.licenseType = anchorTags[i].innerHTML;
                 }
             }
+
             
             var title = doc.getElementsByTagName('title')[0].innerHTML;
-            result.bookTitle = result.bookTitle.replaceAll(/[-–—]/g, '-');
-            title = title.replaceAll(/[-–—]/g, '-');
+             title = title.replaceAll(/[-–—]/g, '-');
+            if (result.bookTitle){
+                result.bookTitle = result.bookTitle.replaceAll(/[-–—]/g, '-');
+            } else {
+                result.bookTitle = title.substr(title.indexOf(" - ") + 3);
+            }
+            
             result.pageTitle = title.substr(0, title.indexOf(result.bookTitle) - 3);
 
             var spans = doc.getElementsByTagName('span');
