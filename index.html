@@ -64,7 +64,7 @@ SOFTWARE.
         }
 
         // get page from resource and load it
-        function loadTargetPage() {
+        async function loadTargetPage() {
 
             if (useCustomInput) {
 
@@ -85,23 +85,44 @@ SOFTWARE.
             // note that the page is being fetched through the allorigins proxy server API
             // to get around CORS being disabled on the target server
             if (!isYouTubeVideo()){
-            fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(pageURL)}`)
-                .then(response => {
-                    console.log(`Response.ok: ${response.ok}`);
-                    if (response.ok) return response.json()
-                    throw new Error('Network response was not ok.')
-                })
-                .then(data => {
-                    
-                    doc = parser.parseFromString(data.contents, 'text/html');
-                    buildAttribution();
-                })
-                .catch(error => {
+                try{
+            let response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(pageURL)}`);
+            let data = await response.json();    
+            doc = parser.parseFromString(data.contents, 'text/html');  
+                       
+                } catch(error) {
+                    try {
+                    //backup CORS proxy server 
+                    const reponse = await fetch(`https://thingproxy.freeboard.io/fetch/${encodeURIComponent(pageURL)}`);
+                    const data = await response.text();
+                    doc = parser.parseFromString(data, 'text/html');
+                    } catch (err) {
                     errorDiv.innerText = 'Something went wrong. Please try again.'
                     errorDiv.style.display = 'block';
                     loadingDiv.style.display = "none";
-                    console.log(`Error: ${error}`);
-                });
+                    console.log(`Error: ${err}`);
+                    }
+                }
+                        
+                    
+                
+                // .then(response => {
+                //     console.log(`Response.ok: ${response.ok}`);
+                //     if (response.ok) return response.json()
+                //     throw new Error('Network response was not ok.')
+                // })
+                // .then(data => {
+                    
+                //     doc = parser.parseFromString(data.contents, 'text/html');
+                //     buildAttribution();
+                // })
+                // .catch(error => {
+                    
+                //     errorDiv.innerText = 'Something went wrong. Please try again.'
+                //     errorDiv.style.display = 'block';
+                //     loadingDiv.style.display = "none";
+                //     console.log(`Error: ${error}`);
+                // });
             } else {
                 console.log("It's a YouTube video!");
                 let lastSlash = pageURL.lastIndexOf('/');
