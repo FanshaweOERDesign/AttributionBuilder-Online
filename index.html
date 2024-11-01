@@ -92,17 +92,10 @@ SOFTWARE.
             doc = parser.parseFromString(data.contents, 'text/html');  
                        
                 } catch(error) {
-                    try {
-                    //backup CORS proxy server 
-                    const reponse = await fetch(`https://thingproxy.freeboard.io/fetch/${encodeURIComponent(pageURL)}`);
-                    const data = await response.text();
-                    doc = parser.parseFromString(data, 'text/html');
-                    } catch (err) {
                     errorDiv.innerText = 'Something went wrong. Please try again.'
                     errorDiv.style.display = 'block';
                     loadingDiv.style.display = "none";
-                    console.log(`Error: ${err}`);
-                    }
+                    console.log(`Error: ${error}`);
                 }
                         
                     
