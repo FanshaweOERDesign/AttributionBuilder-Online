@@ -103,6 +103,7 @@ SOFTWARE.
                     console.log(`Error: ${error}`);
                 });
             } else {
+                console.log("It's a YouTube video!");
                 let lastSlash = pageURL.lastIndexOf('/');
                 let hasDot = pageURL.includes('youtu.be');
                 let hasInterro = pageURL.includes('?');
