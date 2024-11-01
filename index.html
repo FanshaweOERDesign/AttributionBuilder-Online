@@ -94,7 +94,7 @@ SOFTWARE.
                 })
                 .then(data => {
                     
-                    doc = parser.parseFromString(data.contents, 'text/html');
+                    doc = parser.parseFromString(data, 'text/html');
                     buildAttribution();
                 })
                 .catch(error => {
