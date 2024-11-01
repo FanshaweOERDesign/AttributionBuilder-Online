@@ -86,7 +86,8 @@ SOFTWARE.
             // to get around CORS being disabled on the target server
             if (!isYouTubeVideo()){
                 try{
-            let response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(pageURL)}`);
+            //let response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(pageURL)}`);
+            let response = await fetch(`https://corsproxy.io/?${encodeURIComponent(pageURL)}`);
             let data = await response.json();    
             doc = parser.parseFromString(data.contents, 'text/html');  
                        
