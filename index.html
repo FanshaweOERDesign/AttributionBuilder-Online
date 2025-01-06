@@ -93,7 +93,7 @@ SOFTWARE.
                     throw new Error('Network response was not ok.')
                 })
                 .then(data => {
-                    
+                    console.log(data);
                     doc = parser.parseFromString(data, 'text/html');
                     buildAttribution();
                 })
