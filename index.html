@@ -86,7 +86,7 @@ SOFTWARE.
             // to get around CORS being disabled on the target server
             if (!isYouTubeVideo()){
               
-                fetch(`https://corsproxy.io/?url=encodeURIComponent(${pageURL})`)
+                fetch(`https://corsproxy.io/?key=key=39bb584d&url=encodeURIComponent(${pageURL})`)
                 .then(response => {
                     console.log(`Response.ok: ${response.ok}`);
                     if (response.ok) return response.text()
