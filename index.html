@@ -109,24 +109,6 @@ SOFTWARE.
                     console.log(`Error: ${error}`);
     }
               
-               /* fetch(`https://corsproxy.io/?key=key=39bb584d&url=encodeURIComponent(${pageURL})`)
-                .then(response => {
-                    console.log(`Response.ok: ${response.ok}`);
-                    if (response.ok) return response.text()
-                    throw new Error('Network response was not ok.')
-                })
-                .then(data => {
-                    console.log(data);
-                    doc = parser.parseFromString(data, 'text/html');
-                    buildAttribution();
-                })
-                .catch(error => {
-                    
-                    errorDiv.innerText = 'Something went wrong. Please try again.'
-                    errorDiv.style.display = 'block';
-                    loadingDiv.style.display = "none";
-                    console.log(`Error: ${error}`);
-                });*/
             } else {
                 console.log("It's a YouTube video!");
                 let lastSlash = pageURL.lastIndexOf('/');
