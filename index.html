@@ -92,7 +92,7 @@ SOFTWARE.
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ pageURL }), // Sending the bookURL in the request body
+            body: JSON.stringify({ bookURL: pageURL }), // Sending the bookURL in the request body
         });
 
         if (!response.ok) {
