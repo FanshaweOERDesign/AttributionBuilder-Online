@@ -135,8 +135,19 @@ function getPressbooksAttribution() {
             result.bookTitle = metaTags[i].getAttribute('content');
         }
         else if (metaTags[i].getAttribute('name') === "citation_author") {
-            result.author = metaTags[i].getAttribute('content');
+            if (!result.author) {
+                result.author = metaTags[i].getAttribute('content');
+            }
+            else {
+                result.author += ", " + metaTags[i].getAttribute('content');
+            }
         }
+    }
+
+    result.author = result.author.trim();
+    const lastComma = result.author.lastIndexOf(',');
+    if (lastComma !== -1) {
+        result.author = result.author.substring(0, lastComma) + " &" + result.author.substring(lastComma + 1);
     }
 
     if (pageURL.includes('chapter')) {
