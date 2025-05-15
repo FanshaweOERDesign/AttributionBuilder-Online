@@ -1,0 +1,101 @@
+body {
+    min-width: 250px;
+    background-image: url(images/fanshawe_wallpaper.jpg);
+    background-size: cover;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    font-family: monospace, sans-serif;
+}
+
+.wrap {
+    width: 60%;
+    height: 77vh;
+    text-align: center;
+    background-color: #f7f5f5;
+    display: inline-block;
+    text-align: center;
+    margin-left: 20%;
+    margin-top: 1vh;
+    border-radius: 25px;
+}
+
+.child {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+button {
+    font-size: 1.5rem;
+}
+
+footer {
+    text-align: center;
+    color: #fff;
+    margin-top: 1rem;
+}
+
+footer a {
+
+    color: white;
+}
+
+#logo {
+    width: 74px;
+}
+
+#logo-div {
+    text-align: center;
+    margin-top: 2vh;
+}
+
+#resultTxtCopyRes {
+    margin-left: 1rem;
+}
+
+/* loading dots*/
+@keyframes pulse {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: .25;
+        transform: scale(.75);
+    }
+}
+
+.spinner-box {
+    font-weight: bold;
+    color: #d42621;
+    margin-top: 40px;
+}
+
+.pulse-container {
+    width: 120px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.pulse-bubble {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #df211c;
+}
+
+.pulse-bubble-1 {
+    animation: pulse .4s ease 0s infinite alternate;
+}
+
+.pulse-bubble-2 {
+    animation: pulse .4s ease .2s infinite alternate;
+}
+
+.pulse-bubble-3 {
+    animation: pulse .4s ease .4s infinite alternate;
+}
