@@ -85,6 +85,7 @@ async function loadTargetPage() {
         } else {
             ytID = hasDot ? pageURL.substring(lastSlash + 1, hasInterro ? pageURL.indexOf('?') : null) : pageURL.substring(idStart);
         }
+        // This API key is restricted to this domain and will only work for YouTube video data
         fetch(`https://www.googleapis.com/youtube/v3/videos?id=${ytID}&key=AIzaSyDtSVJTrY58QpW8xf3tO72OoHz-drJFlyI&part=snippet,contentDetails`)
             .then(response => {
                 if (response.ok) return response.json()
@@ -203,6 +204,77 @@ function getOpenStaxAttribution() {
 
 }
 
+function getLibreTextAtrribution() {
+    function getLibreBookURL() {
+        const temp = pageURL.split("/");
+        temp.pop();
+        temp.pop();
+        return temp.join("/") + "/";
+    }
+
+    function parseLibrePageTags() {
+        const pageTags = doc.querySelector("#pageTagsHolder");
+        const tagsArray1 = JSON.parse(pageTags.innerText);
+        const tagsArray2 = tagsArray1.map(tag => {
+            const tagParts = tag.split(/:|@/);
+            return {
+                name: tagParts[0],
+                value: tagParts[1]
+            };
+        });
+        return tagsArray2;
+    }
+
+    function formatLibreLicense(licenseTag, licenseVersionTag) {
+        let licenseText = licenseTag.value;
+        const licenseVersion = licenseVersionTag.value;
+        const shortToLong = {
+            ["by"]: "Attribution",
+            ["nc"]: "NonCommercial",
+            ["nd"]: "NoDerivatives",
+            ["sa"]: "ShareAlike",
+            ["cc"]: "Creative Commons",
+        };
+        let convertedLicenseText = "";
+        for (let i = 0; i < licenseText.length; i+=2) {
+            let part = licenseText.substring(i, i + 2).trim();
+            if (shortToLong[part]) {
+                convertedLicenseText += shortToLong[part] + (i > 0 ? "-" : " ");
+            } else {
+                convertedLicenseText += part + "-";
+            }
+        }
+
+        if (convertedLicenseText.endsWith("-")) {
+            convertedLicenseText = convertedLicenseText.slice(0, -1);
+        }
+        
+        const formattedLicenseVersion = licenseVersion.substring(0, 1) + "." + licenseVersion.substring(1);
+
+        return convertedLicenseText + " " + formattedLicenseVersion + " International License";
+    }
+
+    let result = new Attribution(pageURL);
+    const pageTitleElement = doc.querySelector("#titleHolder");
+    result.pageTitle = pageTitleElement.innerText;
+    const bookTitleElement = doc.querySelector("#parentParentTitleHolder");
+    result.bookTitle = bookTitleElement.innerText;
+    result.bookURL = getLibreBookURL();
+    const pageTags = parseLibrePageTags();
+    const licenseTag = pageTags.find(tag => tag.name === "license");
+    const licenseVersionTag = pageTags.find(tag => tag.name === "licenseversion");
+    const authorTag = pageTags.find(tag => tag.name === "author");
+    const autoAttrElement = doc.querySelector('.autoattribution');
+    const autoAttrAnchors = autoAttrElement.querySelectorAll('a');
+    const licenseURL = Array.from(autoAttrAnchors).find(anchor => anchor.getAttribute("href")?.includes("creativecommons.org"))?.getAttribute('href');
+    result.licenseURL = licenseURL;
+    result.licenseType = formatLibreLicense(licenseTag, licenseVersionTag);
+    result.author = authorTag.value;
+
+    return result;
+}
+
+
 function getCustomAttribution() {
 
     let result = new Attribution(
@@ -226,6 +298,14 @@ function isYouTubeVideo() {
     return pageURL.match(regExp);
 }
 
+function isLibreText() {
+    if (!doc) {
+        return false;
+    }
+    const urlMetaTag = doc.querySelector('meta[property="og:url"]');
+    return urlMetaTag && urlMetaTag.getAttribute('content').includes("libretexts.org");
+}
+
 function buildAttribution(data) {
 
     let attribution;
@@ -240,6 +320,10 @@ function buildAttribution(data) {
     else if (!useCustomInput && targetURL.includes('openstax')) {
         inputDiv.style.display = 'none';
         attribution = getOpenStaxAttribution();
+    }
+    else if (!useCustomInput && isLibreText()) {
+        inputDiv.style.display = 'none';
+        attribution = getLibreTextAtrribution();
     }
     else if (!useCustomInput && isYouTubeVideo()) {
         console.log("Is YouTube! Line 215");
