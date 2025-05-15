@@ -34,6 +34,7 @@ async function loadTargetPage() {
         buildAttribution();
         return;
     }
+    doc = null;
     let inputDiv = document.getElementById('customInputDiv');
     const loadingDiv = document.getElementById('loading-dots');
     const outputDiv = document.getElementById("outputDiv");
