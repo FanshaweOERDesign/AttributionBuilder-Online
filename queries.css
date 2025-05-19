@@ -1,0 +1,25 @@
+@media only screen and (max-width: 800px) {
+    .wrap {
+        padding: 1rem;
+        width: 80%;
+    }
+
+    input {
+        text-align: center;
+        display: block;
+        width: 100%;
+    }
+
+    h1 {
+        word-wrap: break-word;
+    }
+
+    textarea {
+        width: 100%;
+        min-height: 200px;
+    }
+
+    button {
+        width: 100%;
+    }
+}

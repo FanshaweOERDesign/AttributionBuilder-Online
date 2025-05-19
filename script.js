@@ -28,33 +28,32 @@ class VideoAttribution {
 
 // get page from resource and load it
 async function loadTargetPage() {
-
+    // calls function to remove copied message background (in case you click Build Attribution after copying)
+    clearCopiedMsg();
     if (useCustomInput) {
-
         buildAttribution();
         return;
     }
     doc = null;
-    let inputDiv = document.getElementById('customInputDiv');
-    const loadingDiv = document.getElementById('loading-dots');
+    let inputDiv = document.getElementById("customInputDiv");
+    const loadingDiv = document.getElementById("loading-dots");
     const outputDiv = document.getElementById("outputDiv");
     const errorDiv = document.getElementById("error");
     loadingDiv.style.display = "block";
     outputDiv.style.display = "none";
     errorDiv.style.display = "none";
     document.getElementById("resultTxtCopyRes").innerHTML = "";
-    pageURL = document.getElementById('targetURL').value;
+    pageURL = document.getElementById("targetURL").value;
     console.log(pageURL);
 
     // note that the page is being fetched through the allorigins proxy server API
     // to get around CORS being disabled on the target server
     if (!isYouTubeVideo()) {
-
         try {
-            const response = await fetch('https://fetcher-production-8123.up.railway.app/bookData', {
-                method: 'POST',
+            const response = await fetch("https://fetcher-production-8123.up.railway.app/bookData", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ bookURL: pageURL }), // Sending the bookURL in the request body
             });
@@ -64,42 +63,40 @@ async function loadTargetPage() {
             }
 
             const result = await response.json();
-            doc = parser.parseFromString(result.data, 'text/html');
+            doc = parser.parseFromString(result.data, "text/html");
             buildAttribution();
         } catch (error) {
-            errorDiv.innerText = 'Something went wrong. Please try again.'
-            errorDiv.style.display = 'block';
+            errorDiv.innerText = "Something went wrong. Please try again.";
+            errorDiv.style.display = "block";
             loadingDiv.style.display = "none";
             console.log(`Error: ${error}`);
         }
-
     } else {
         console.log("It's a YouTube video!");
-        let lastSlash = pageURL.lastIndexOf('/');
-        let hasDot = pageURL.includes('youtu.be');
-        let hasInterro = pageURL.includes('?');
-        let idStart = pageURL.indexOf('v=') + 2;
+        let lastSlash = pageURL.lastIndexOf("/");
+        let hasDot = pageURL.includes("youtu.be");
+        let hasInterro = pageURL.includes("?");
+        let idStart = pageURL.indexOf("v=") + 2;
         let ytID;
         if (lastSlash === pageURL.length - 1) {
             let truncPageURL = pageURL.substring(0, lastSlash);
-            ytID = hasDot ? truncPageURL.substring(truncPageURL.lastIndexOf('/') + 1, hasInterro ? truncPageURL.indexOf('?') : null) : truncPageURL.substring(idStart);
+            ytID = hasDot ? truncPageURL.substring(truncPageURL.lastIndexOf("/") + 1, hasInterro ? truncPageURL.indexOf("?") : null) : truncPageURL.substring(idStart);
         } else {
-            ytID = hasDot ? pageURL.substring(lastSlash + 1, hasInterro ? pageURL.indexOf('?') : null) : pageURL.substring(idStart);
+            ytID = hasDot ? pageURL.substring(lastSlash + 1, hasInterro ? pageURL.indexOf("?") : null) : pageURL.substring(idStart);
         }
         // This API key is restricted to this domain and will only work for YouTube video data
         fetch(`https://www.googleapis.com/youtube/v3/videos?id=${ytID}&key=AIzaSyDtSVJTrY58QpW8xf3tO72OoHz-drJFlyI&part=snippet,contentDetails`)
-            .then(response => {
-                if (response.ok) return response.json()
-                throw new Error('Network response was not ok.')
+            .then((response) => {
+                if (response.ok) return response.json();
+                throw new Error("Network response was not ok.");
             })
-            .then(data => {
-
+            .then((data) => {
                 console.info("Video data: %o", data);
                 buildAttribution(data);
             })
-            .catch(error => {
-                errorDiv.innerText = 'Something went wrong. Please try again.'
-                errorDiv.style.display = 'block';
+            .catch((error) => {
+                errorDiv.innerText = "Something went wrong. Please try again.";
+                errorDiv.style.display = "block";
                 loadingDiv.style.display = "none";
                 console.log(`Error: ${error}`);
             });
@@ -110,10 +107,9 @@ function isPressbooks() {
     if (!doc) {
         return false;
     }
-    var elements = doc.getElementsByTagName('*');
+    var elements = doc.getElementsByTagName("*");
     for (let i = 0; i < elements.length; i++) {
-
-        let classes = elements[i].getAttribute('class');
+        let classes = elements[i].getAttribute("class");
 
         if (classes && classes.includes("pressbooks")) {
             return true;
@@ -126,65 +122,56 @@ function isPressbooks() {
 function getPressbooksAttribution() {
     console.log(pageURL);
     let result = new Attribution(pageURL);
-    let metaTags = doc.getElementsByTagName('meta');
+    let metaTags = doc.getElementsByTagName("meta");
     for (let i = 0; i < metaTags.length; i++) {
-        if (metaTags[i].getAttribute('name') === "citation_title") {
-            result.pageTitle = metaTags[i].getAttribute('content');
-        }
-        else if (metaTags[i].getAttribute('name') === "citation_book_title") {
-            result.bookTitle = metaTags[i].getAttribute('content');
-        }
-        else if (metaTags[i].getAttribute('name') === "citation_author") {
+        if (metaTags[i].getAttribute("name") === "citation_title") {
+            result.pageTitle = metaTags[i].getAttribute("content");
+        } else if (metaTags[i].getAttribute("name") === "citation_book_title") {
+            result.bookTitle = metaTags[i].getAttribute("content");
+        } else if (metaTags[i].getAttribute("name") === "citation_author") {
             if (!result.author) {
-                result.author = metaTags[i].getAttribute('content');
-            }
-            else {
-                result.author += ", " + metaTags[i].getAttribute('content');
+                result.author = metaTags[i].getAttribute("content");
+            } else {
+                result.author += ", " + metaTags[i].getAttribute("content");
             }
         }
     }
 
     result.author = result.author.trim();
-    const lastComma = result.author.lastIndexOf(',');
+    const lastComma = result.author.lastIndexOf(",");
     if (lastComma !== -1) {
         result.author = result.author.substring(0, lastComma) + " &" + result.author.substring(lastComma + 1);
     }
 
-    if (pageURL.includes('chapter')) {
-        result.bookURL = pageURL.substr(0, pageURL.lastIndexOf('/chapter')) + '/';
-    }
-    else {
+    if (pageURL.includes("chapter")) {
+        result.bookURL = pageURL.substr(0, pageURL.lastIndexOf("/chapter")) + "/";
+    } else {
         result.bookURL = pageURL;
     }
 
-
-    var anchorTags = doc.getElementsByTagName('a');
+    var anchorTags = doc.getElementsByTagName("a");
 
     for (let i = 0; i < anchorTags.length; i++) {
-
-        if (anchorTags[i].getAttribute('rel') === "cc:attributionURL") {
-            result.bookURL = anchorTags[i].getAttribute('href');
+        if (anchorTags[i].getAttribute("rel") === "cc:attributionURL") {
+            result.bookURL = anchorTags[i].getAttribute("href");
             result.bookTitle = anchorTags[i].innerHTML;
-            result.bookTitle = result.bookTitle.replaceAll(/[-–—]/g, '-');
-        }
-        else if (anchorTags[i].getAttribute('rel') === "license") {
-            result.licenseURL = anchorTags[i].getAttribute('href');
+            result.bookTitle = result.bookTitle.replaceAll(/[-–—]/g, "-");
+        } else if (anchorTags[i].getAttribute("rel") === "license") {
+            result.licenseURL = anchorTags[i].getAttribute("href");
             result.licenseType = anchorTags[i].innerHTML;
         }
     }
 
     if (!result.pageTitle) {
-        result.pageTitle = doc.getElementsByTagName('title')[0].innerHTML;
+        result.pageTitle = doc.getElementsByTagName("title")[0].innerHTML;
         result.pageTitle = result.pageTitle.substr(0, title.indexOf(result.bookTitle) - 3);
     }
 
     if (!result.author) {
-        var spans = doc.getElementsByTagName('span');
+        var spans = doc.getElementsByTagName("span");
 
         for (let i = 0; i < spans.length; i++) {
-
-            if (spans[i].getAttribute('property') === "cc:attributionName") {
-
+            if (spans[i].getAttribute("property") === "cc:attributionName") {
                 result.author = spans[i].innerHTML;
             }
         }
@@ -196,24 +183,23 @@ function getPressbooksAttribution() {
 // Create and display attribution for an OpenStax resource
 function getOpenStaxAttribution() {
     let result = new Attribution(pageURL);
-    var pageTitleElement = doc.querySelector("[class^=\"BookBanner__BookChapter\"]");
+    var pageTitleElement = doc.querySelector('[class^="BookBanner__BookChapter"]');
     result.pageTitle = pageTitleElement.innerText;
     console.log(result.pageTitle);
 
-    var bookTitleElement = doc.querySelector("[class^=\"BookBanner__BookTitleLink\"]");
+    var bookTitleElement = doc.querySelector('[class^="BookBanner__BookTitleLink"]');
     result.bookTitle = bookTitleElement.innerText;
-    result.bookURL = 'https://openstax.org' + bookTitleElement.getAttribute('href');
+    result.bookURL = "https://openstax.org" + bookTitleElement.getAttribute("href");
     console.log(result.bookTitle + " " + result.bookURL);
 
-    var licenseElement = doc.querySelector("[data-html=\"copyright\"] > a");
+    var licenseElement = doc.querySelector('[data-html="copyright"] > a');
     result.licenseType = licenseElement.innerText;
-    result.licenseURL = licenseElement.getAttribute('href');
+    result.licenseURL = licenseElement.getAttribute("href");
     console.log(result.licenseType + " " + result.licenseURL);
 
-    result.author = "<a href=\'https://openstax.org/\'>OpenStax - Rice University</a>";
+    result.author = "<a href='https://openstax.org/'>OpenStax - Rice University</a>";
 
     return result;
-
 }
 
 function getLibreTextAtrribution() {
@@ -227,11 +213,11 @@ function getLibreTextAtrribution() {
     function parseLibrePageTags() {
         const pageTags = doc.querySelector("#pageTagsHolder");
         const tagsArray1 = JSON.parse(pageTags.innerText);
-        const tagsArray2 = tagsArray1.map(tag => {
+        const tagsArray2 = tagsArray1.map((tag) => {
             const tagParts = tag.split(/:|@/);
             return {
                 name: tagParts[0],
-                value: tagParts[1]
+                value: tagParts[1],
             };
         });
         return tagsArray2;
@@ -248,7 +234,7 @@ function getLibreTextAtrribution() {
             ["cc"]: "Creative Commons",
         };
         let convertedLicenseText = "";
-        for (let i = 0; i < licenseText.length; i+=2) {
+        for (let i = 0; i < licenseText.length; i += 2) {
             let part = licenseText.substring(i, i + 2).trim();
             if (shortToLong[part]) {
                 convertedLicenseText += shortToLong[part] + (i > 0 ? "-" : " ");
@@ -260,7 +246,7 @@ function getLibreTextAtrribution() {
         if (convertedLicenseText.endsWith("-")) {
             convertedLicenseText = convertedLicenseText.slice(0, -1);
         }
-        
+
         const formattedLicenseVersion = licenseVersion.substring(0, 1) + "." + licenseVersion.substring(1);
 
         return convertedLicenseText + " " + formattedLicenseVersion + " International License";
@@ -273,12 +259,14 @@ function getLibreTextAtrribution() {
     result.bookTitle = bookTitleElement.innerText;
     result.bookURL = getLibreBookURL();
     const pageTags = parseLibrePageTags();
-    const licenseTag = pageTags.find(tag => tag.name === "license");
-    const licenseVersionTag = pageTags.find(tag => tag.name === "licenseversion");
-    const authorTag = pageTags.find(tag => tag.name === "author");
-    const autoAttrElement = doc.querySelector('.autoattribution');
-    const autoAttrAnchors = autoAttrElement.querySelectorAll('a');
-    const licenseURL = Array.from(autoAttrAnchors).find(anchor => anchor.getAttribute("href")?.includes("creativecommons.org"))?.getAttribute('href');
+    const licenseTag = pageTags.find((tag) => tag.name === "license");
+    const licenseVersionTag = pageTags.find((tag) => tag.name === "licenseversion");
+    const authorTag = pageTags.find((tag) => tag.name === "author");
+    const autoAttrElement = doc.querySelector(".autoattribution");
+    const autoAttrAnchors = autoAttrElement.querySelectorAll("a");
+    const licenseURL = Array.from(autoAttrAnchors)
+        .find((anchor) => anchor.getAttribute("href")?.includes("creativecommons.org"))
+        ?.getAttribute("href");
     result.licenseURL = licenseURL;
     result.licenseType = formatLibreLicense(licenseTag, licenseVersionTag);
     result.author = authorTag.value;
@@ -286,18 +274,8 @@ function getLibreTextAtrribution() {
     return result;
 }
 
-
 function getCustomAttribution() {
-
-    let result = new Attribution(
-        document.getElementById('pageURL').value,
-        document.getElementById('pageTitle').value,
-        document.getElementById('bookURL').value,
-        document.getElementById('bookTitle').value,
-        document.getElementById('author').value,
-        document.getElementById('licenceURL').value,
-        document.getElementById('licenceType').value
-    );
+    let result = new Attribution(document.getElementById("pageURL").value, document.getElementById("pageTitle").value, document.getElementById("bookURL").value, document.getElementById("bookTitle").value, document.getElementById("author").value, document.getElementById("licenceURL").value, document.getElementById("licenceType").value);
     useCustomInput = false;
     return result;
 }
@@ -315,57 +293,50 @@ function isLibreText() {
         return false;
     }
     const urlMetaTag = doc.querySelector('meta[property="og:url"]');
-    return urlMetaTag && urlMetaTag.getAttribute('content').includes("libretexts.org");
+    return urlMetaTag && urlMetaTag.getAttribute("content").includes("libretexts.org");
 }
 
 function buildAttribution(data) {
-
     let attribution;
-    let outTxt = document.getElementById('resultTxt');
-    let targetURL = document.getElementById('targetURL').value;
-    let inputDiv = document.getElementById('customInputDiv');
+    let outTxt = document.getElementById("resultTxt");
+    let targetURL = document.getElementById("targetURL").value;
+    let inputDiv = document.getElementById("customInputDiv");
 
     if (!useCustomInput && isPressbooks()) {
-        inputDiv.style.display = 'none';
+        inputDiv.style.display = "none";
         attribution = getPressbooksAttribution();
-    }
-    else if (!useCustomInput && targetURL.includes('openstax')) {
-        inputDiv.style.display = 'none';
+    } else if (!useCustomInput && targetURL.includes("openstax")) {
+        inputDiv.style.display = "none";
         attribution = getOpenStaxAttribution();
-    }
-    else if (!useCustomInput && isLibreText()) {
-        inputDiv.style.display = 'none';
+    } else if (!useCustomInput && isLibreText()) {
+        inputDiv.style.display = "none";
         attribution = getLibreTextAtrribution();
-    }
-    else if (!useCustomInput && isYouTubeVideo()) {
+    } else if (!useCustomInput && isYouTubeVideo()) {
         console.log("Is YouTube! Line 215");
-        const attribution = getVideoAttribution(data)
+        const attribution = getVideoAttribution(data);
         const output = `<p>Video: "<a href="${attribution.videoURL}">${attribution.videoTitle}</a>" by <a href="${attribution.channelURL}">${attribution.channelTitle}</a> [${attribution.duration}] is licensed under the <a href="https://www.youtube.com/static?template=terms">Standard YouTube License</a>.<em>Transcript and closed captions available on YouTube.</em></p>`;
-        document.getElementById('loading-dots').style.display = "none";
+        document.getElementById("loading-dots").style.display = "none";
         document.getElementById("error").style.display = "none";
         document.getElementById("outputDiv").style.display = "block";
         outTxt.value = output;
         return;
-    }
-    else {
+    } else {
         useCustomInput = true;
-        document.getElementById('loading-dots').style.display = "none";
+        document.getElementById("loading-dots").style.display = "none";
         document.getElementById("error").style.display = "none";
-        if (inputDiv.style.display == 'block') {
+        if (inputDiv.style.display == "block") {
             attribution = getCustomAttribution();
-        }
-        else {
-            inputDiv.style.display = 'block';
+        } else {
+            inputDiv.style.display = "block";
             return;
         }
     }
     outTxt.value = `"<a href='${attribution.pageURL}'>${attribution.pageTitle}</a>" from <a href='${attribution.bookURL}'>${attribution.bookTitle}</a> by ${attribution.author} is licensed under a <a href='${attribution.licenseURL}'>${attribution.licenseType}</a>, except where otherwise noted.`;
     console.log(attribution);
-    document.getElementById('loading-dots').style.display = "none";
+    document.getElementById("loading-dots").style.display = "none";
     document.getElementById("error").style.display = "none";
     document.getElementById("outputDiv").style.display = "block";
 }
-
 
 /**
  * Extracts video details from the fetched data.
@@ -398,9 +369,9 @@ function getVideoAttribution(data) {
  */
 function formatDuration(duration) {
     const match = duration.match(/PT(\d+M)?(\d+S)?/);
-    const minutes = match[1] ? match[1].replace('M', '') : '0';
-    const seconds = match[2] ? match[2].replace('S', '') : '0';
-    return `${minutes}:${seconds.padStart(2, '0')}`;
+    const minutes = match[1] ? match[1].replace("M", "") : "0";
+    const seconds = match[2] ? match[2].replace("S", "") : "0";
+    return `${minutes}:${seconds.padStart(2, "0")}`;
 }
 
 // Copies contents of output textarea to the clipboard
@@ -408,15 +379,19 @@ function copy(id) {
     let textarea = document.getElementById(id).value;
     navigator.clipboard.writeText(textarea);
     let resId = id + "CopyRes";
+    document.getElementById(resId).style.display = "block";
     document.getElementById(resId).innerHTML = "Copied!";
-};
+}
 
 function startup() {
-
     document.getElementById("targetURL").addEventListener("keyup", (e) => {
-
         if (e.key == "Enter") {
             loadTargetPage();
         }
-    })
+    });
+}
+
+// sets copyresult div back to it's default e.g. none.
+function clearCopiedMsg() {
+    document.getElementById("resultTxtCopyRes").style.display = "";
 }
