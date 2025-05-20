@@ -1,4 +1,4 @@
-<!doctype HTML>
+<!DOCTYPE html>
 <!--
 MIT License
 
@@ -23,106 +23,99 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
 <html>
-
-<head>
-    <meta charset="UTF-8">
-    <title>Attribution Builder</title>
-    <meta author="Jason Benoit, David Giesbrecht, and Stephany Ceron">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--[if lt IE 9]>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Attribution Builder</title>
+        <meta author="Jason Benoit, David Giesbrecht, and Stephany Ceron" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!--[if lt IE 9]>
             <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
-    <link rel="shortcut icon" href="images/oer_logo.ico" />
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
-</head>
+        <link rel="shortcut icon" href="images/oer_logo.ico" />
 
-<body onload="startup();">
+        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="queries.css" />
+        <script src="script.js"></script>
+    </head>
 
-    <div class="wrap">
-        <h1>AttributionBuilder</h1>
-        <div class="child">
-            <input type="text" id="targetURL" size="50" onfocus="this.select();"
-                style="font-size: 1rem; max-width: 80%;" placeholder="Enter target URL" />
-            <iframe id="pageFrame" style='display: none;'></iframe>
-        </div>
-        <div id='customInputDiv' style='display: none;'>
-            <div>
-                <input type="text" id="pageTitle" class="child" placeholder="page title" />
-            </div>
-            <div>
-                <input type="text" id="pageURL" class="child" placeholder="page URL" />
-            </div>
-            <div>
-                <input type="text" id="bookTitle" class="child" placeholder="book title" />
-            </div>
-            <div>
-                <input type="text" id="bookURL" class="child" placeholder="book URL" />
-            </div>
-            <div>
-                <input type="text" id="author" class="child" placeholder="author" />
-            </div>
-            <div>
-                <input type="text" id="licenceType" class="child" placeholder="licence type" />
-            </div>
-            <div>
-                <input type="text" id="licenceURL" class="child" placeholder="licence URL" />
-            </div>
-        </div>
-        <div class="child">
-            <button id="loadPageBtn" onClick="loadTargetPage();">Build Attribution</button>
-        </div>
-        <div id="loading-dots" class="spinner-box" style="display: none;">
-            <p>Work in progress</p>
-            <div class="pulse-container">
-                <div class="pulse-bubble pulse-bubble-1"></div>
-                <div class="pulse-bubble pulse-bubble-2"></div>
-                <div class="pulse-bubble pulse-bubble-3"></div>
-            </div>
-            <p>May take a few moments</p>
-        </div>
+    <body onload="startup();">
+        <main>
+            <div class="wrap">
+                <h1>AttributionBuilder</h1>
+                <div class="child">
+                    <input type="text" id="targetURL" onfocus="this.select();" placeholder="Enter target URL" />
+                    <iframe id="pageFrame" style="display: none"></iframe>
+                </div>
+                <div id="customInputDiv" style="display: none">
+                    <div>
+                        <input type="text" id="pageTitle" class="child" placeholder="page title" />
+                    </div>
+                    <div>
+                        <input type="text" id="pageURL" class="child" placeholder="page URL" />
+                    </div>
+                    <div>
+                        <input type="text" id="bookTitle" class="child" placeholder="book title" />
+                    </div>
+                    <div>
+                        <input type="text" id="bookURL" class="child" placeholder="book URL" />
+                    </div>
+                    <div>
+                        <input type="text" id="author" class="child" placeholder="author" />
+                    </div>
+                    <div>
+                        <input type="text" id="licenceType" class="child" placeholder="licence type" />
+                    </div>
+                    <div>
+                        <input type="text" id="licenceURL" class="child" placeholder="licence URL" />
+                    </div>
+                </div>
+                <div class="child">
+                    <button id="loadPageBtn" onClick="loadTargetPage();">Build Attribution</button>
+                </div>
+                <div id="loading-dots" class="spinner-box" style="display: none">
+                    <p>Work in progress</p>
+                    <div class="pulse-container">
+                        <div class="pulse-bubble pulse-bubble-1"></div>
+                        <div class="pulse-bubble pulse-bubble-2"></div>
+                        <div class="pulse-bubble pulse-bubble-3"></div>
+                    </div>
+                    <p>May take a few moments</p>
+                </div>
 
-        <div class="child">
-            <span id="error" style="display: none;"></span>
-        </div>
+                <div class="child">
+                    <span id="error" style="display: none"></span>
+                </div>
 
-        <div id="outputDiv" style="display: none;" class="child">
-            <textarea id="resultTxt" rows="4" cols="50"></textarea>
-            <div>
-                <button id="copyBtn" onclick="copy('resultTxt')">Copy to Clipboard</button>
-
+                <div id="outputDiv" style="display: none" class="child">
+                    <textarea disabled id="resultTxt" rows="4"></textarea>
+                    <div>
+                        <button id="copyBtn" onclick="copy('resultTxt')">Copy to Clipboard</button>
+                    </div>
+                    <div id="resultTxtCopyRes"></div>
+                </div>
             </div>
-            <span id="resultTxtCopyRes"></span>
+            <div id="logo-div">
+                <img id="logo" src="images/oer_logo.png" />
+            </div>
+        </main>
 
-        </div>
-    </div>
-    <div id="logo-div">
-        <img id="logo" src="images/oer_logo.png" />
-    </div>
-    <footer>
-        <div>AttributionBuilder by Jason Benoit, David Giesbrecht, Stephany Ceron and the Fanshawe OER Design Studio is
-            open source
-            software made available under the <a href="https://choosealicense.com/licenses/mit/">MIT License</a>.
-        </div>
-        <div>
-            Dots animation is based on <a href="https://codepen.io/AlexWarnes/pen/jXYYKL">work by Alex</a>
-            made available under the <a href="https://choosealicense.com/licenses/mit/">MIT License</a>.
-        </div>
-    </footer>
-    <script>
-        // track visits
-        (async function () {
-            try{
-                const params = new URLSearchParams({
-                  appId: window.location.pathname.split('/').filter(Boolean)[0] || 'unknown',
-                  t: Date.now()
-                });
-                await fetch(`https://apphub-analytics-server-production.up.railway.app/track.gif?${params.toString()}`); 
-            } catch(err) {
-                console.error(err);
-            }
-        })();
-    </script>
-</body>
-
+        <footer>
+            <div>AttributionBuilder by Jason Benoit, David Giesbrecht, Stephany Ceron and the Fanshawe OER Design Studio is open source software made available under the <a href="https://choosealicense.com/licenses/mit/">MIT License</a>.</div>
+            <div>Dots animation is based on <a href="https://codepen.io/AlexWarnes/pen/jXYYKL">work by Alex</a> made available under the <a href="https://choosealicense.com/licenses/mit/">MIT License</a>.</div>
+        </footer>
+        <script>
+            // track visits
+            (async function () {
+                try {
+                    const params = new URLSearchParams({
+                        appId: window.location.pathname.split("/").filter(Boolean)[0] || "unknown",
+                        t: Date.now(),
+                    });
+                    await fetch(`https://apphub-analytics-server-production.up.railway.app/track.gif?${params.toString()}`);
+                } catch (err) {
+                    console.error(err);
+                }
+            })();
+        </script>
+    </body>
 </html>
