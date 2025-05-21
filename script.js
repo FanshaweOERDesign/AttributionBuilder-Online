@@ -234,8 +234,11 @@ function getLibreTextAtrribution() {
                 value: tagParts[1]
             };
         });
+         console.log(tagsArray2);
         return tagsArray2;
     }
+
+   
 
     function formatLibreLicense(licenseTag, licenseVersionTag) {
         let licenseText = licenseTag.value;
@@ -281,7 +284,8 @@ function getLibreTextAtrribution() {
     const licenseURL = Array.from(autoAttrAnchors).find(anchor => anchor.getAttribute("href")?.includes("creativecommons.org"))?.getAttribute('href');
     result.licenseURL = licenseURL;
     result.licenseType = formatLibreLicense(licenseTag, licenseVersionTag);
-    result.author = authorTag.value;
+
+    result.author = authorTag ? authorTag.value : "LibreTexts";
 
     return result;
 }
