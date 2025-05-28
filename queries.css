@@ -7,15 +7,21 @@
     .wrap {
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        height: 90vh;
+        justify-content: space-around;
+        background-color: rgba(255, 255, 255, 0.7);
+        min-height: 90vh;
         padding: 1rem;
         width: 100%;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
+        border-radius: 0;
         box-shadow: 1px 5px 8px black;
+    }
+
+    .wrap-content {
+        margin-top: -40px;
+        justify-content: middle;
+    }
+    #targetURL {
+        width: 100%;
     }
 
     input {

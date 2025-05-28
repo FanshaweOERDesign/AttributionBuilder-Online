@@ -27,15 +27,27 @@ main {
 
 .wrap {
     width: 60%;
-    height: 70vh;
+    min-height: 500px;
     text-align: center;
-    background-color: #f7f5f5;
+    background-color: white;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    text-align: center;
+    justify-content: baseline;
     border-radius: 25px;
-    padding: 1rem;
+    /* padding: 1rem; */
+}
+
+.wrapper-header {
+    display: block;
+    padding-top: 20px;
+    min-height: 40px;
+}
+
+.wrap-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .child {
@@ -43,8 +55,14 @@ main {
     margin-bottom: 0.5rem;
 }
 
+.info-desc {
+    display: block;
+    font-size: 15px;
+    font-style: italic;
+}
+
 input {
-    width: fit-content;
+    border-radius: 5px;
 }
 
 textarea {
@@ -53,16 +71,27 @@ textarea {
     resize: none;
 }
 
+label {
+    display: block;
+}
+
 #targetURL {
+    border: 1px solid slategray;
     text-align: center;
-    padding: 0.1rem;
-    font-size: 20px;
+    padding: 12px 20px;
+    font-size: 18px;
+    width: 80%;
 }
 
 button {
     font-size: 1.5em;
-    padding: 0.1rem;
+    border-radius: 5px;
+    padding: 0.5em;
     width: fit-content;
+    border: 0.1px solid slategray;
+}
+
+button:hover {
 }
 
 footer {
