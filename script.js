@@ -26,6 +26,12 @@ class VideoAttribution {
     }
 }
 
+function clientSideLimits(input, maxLength = 1000) {
+    return input
+        .slice(0, maxLength)
+        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, ''); // Remove problematic chars
+}
+
 // get page from resource and load it
 async function loadTargetPage() {
     // calls function to remove copied message background (in case you click Build Attribution after copying)
@@ -43,8 +49,8 @@ async function loadTargetPage() {
     outputDiv.style.display = "none";
     errorDiv.style.display = "none";
     document.getElementById("resultTxtCopyRes").innerHTML = "";
-    pageURL = document.getElementById("targetURL").value;
-    console.log(pageURL);
+    pageURL = clientSideLimits(document.getElementById("targetURL").value);
+    //console.log(pageURL);
 
     // note that the page is being fetched through the allorigins proxy server API
     // to get around CORS being disabled on the target server
@@ -220,11 +226,9 @@ function getLibreTextAtrribution() {
                 value: tagParts[1],
             };
         });
-         console.log(tagsArray2);
+        console.log(tagsArray2);
         return tagsArray2;
     }
-
-   
 
     function formatLibreLicense(licenseTag, licenseVersionTag) {
         let licenseText = licenseTag.value;
