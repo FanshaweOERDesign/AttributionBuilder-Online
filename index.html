@@ -41,57 +41,63 @@ SOFTWARE.
     <body onload="startup();">
         <main>
             <div class="wrap">
-                <h1>AttributionBuilder</h1>
-                <div class="child">
-                    <input type="text" id="targetURL" onfocus="this.select();" placeholder="Enter target URL" maxLength="1000"/>
-                    <iframe id="pageFrame" style="display: none"></iframe>
+                <div class="wrapper-header">
+                    <h1>AttributionBuilder</h1>
+                    <span class="info-desc">The resource could be a Pressbook, OpenStax, LibreText or YouTube video</span>
                 </div>
-                <div id="customInputDiv" style="display: none">
-                    <div>
-                        <input type="text" id="pageTitle" class="child" placeholder="page title" />
+                <div class="wrap-content">
+                    <div class="child">
+                        <label for="targetURL">Resource URL</label>
+                        <input title="The resource could be a Pressbook, OpenStax, LibreText or YouTube video." type="text" id="targetURL" onfocus="this.select();" placeholder="Enter resource URL" />
+                        <iframe id="pageFrame" style="display: none"></iframe>
                     </div>
-                    <div>
-                        <input type="text" id="pageURL" class="child" placeholder="page URL" />
+                    <div id="customInputDiv" style="display: none">
+                        <div>
+                            <input type="text" id="pageTitle" class="child" placeholder="page title" />
+                        </div>
+                        <div>
+                            <input type="text" id="pageURL" class="child" placeholder="page URL" />
+                        </div>
+                        <div>
+                            <input type="text" id="bookTitle" class="child" placeholder="book title" />
+                        </div>
+                        <div>
+                            <input type="text" id="bookURL" class="child" placeholder="book URL" />
+                        </div>
+                        <div>
+                            <input type="text" id="author" class="child" placeholder="author" />
+                        </div>
+                        <div>
+                            <input type="text" id="licenceType" class="child" placeholder="licence type" />
+                        </div>
+                        <div>
+                            <input type="text" id="licenceURL" class="child" placeholder="licence URL" />
+                        </div>
                     </div>
-                    <div>
-                        <input type="text" id="bookTitle" class="child" placeholder="book title" />
+                    <div class="child">
+                        <button id="loadPageBtn" onClick="loadTargetPage();">Build Attribution</button>
                     </div>
-                    <div>
-                        <input type="text" id="bookURL" class="child" placeholder="book URL" />
+                    <div id="loading-dots" class="spinner-box" style="display: none">
+                        <p>Work in progress</p>
+                        <div class="pulse-container">
+                            <div class="pulse-bubble pulse-bubble-1"></div>
+                            <div class="pulse-bubble pulse-bubble-2"></div>
+                            <div class="pulse-bubble pulse-bubble-3"></div>
+                        </div>
+                        <p>May take a few moments</p>
                     </div>
-                    <div>
-                        <input type="text" id="author" class="child" placeholder="author" />
-                    </div>
-                    <div>
-                        <input type="text" id="licenceType" class="child" placeholder="licence type" />
-                    </div>
-                    <div>
-                        <input type="text" id="licenceURL" class="child" placeholder="licence URL" />
-                    </div>
-                </div>
-                <div class="child">
-                    <button id="loadPageBtn" onClick="loadTargetPage();">Build Attribution</button>
-                </div>
-                <div id="loading-dots" class="spinner-box" style="display: none">
-                    <p>Work in progress</p>
-                    <div class="pulse-container">
-                        <div class="pulse-bubble pulse-bubble-1"></div>
-                        <div class="pulse-bubble pulse-bubble-2"></div>
-                        <div class="pulse-bubble pulse-bubble-3"></div>
-                    </div>
-                    <p>May take a few moments</p>
-                </div>
 
-                <div class="child">
-                    <span id="error" style="display: none"></span>
-                </div>
-
-                <div id="outputDiv" style="display: none" class="child">
-                    <textarea disabled id="resultTxt" rows="4"></textarea>
-                    <div>
-                        <button id="copyBtn" onclick="copy('resultTxt')">Copy to Clipboard</button>
+                    <div class="child">
+                        <span id="error" style="display: none"></span>
                     </div>
-                    <div id="resultTxtCopyRes"></div>
+
+                    <div id="outputDiv" style="display: none" class="child">
+                        <textarea disabled id="resultTxt" rows="4"></textarea>
+                        <div>
+                            <button id="copyBtn" onclick="copy('resultTxt')">Copy to Clipboard</button>
+                        </div>
+                        <div id="resultTxtCopyRes"></div>
+                    </div>
                 </div>
             </div>
             <div id="logo-div">
