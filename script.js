@@ -69,6 +69,7 @@ async function loadTargetPage() {
             }
 
             const result = await response.json();
+            console.log(result.data);
             doc = parser.parseFromString(result.data, "text/html");
             buildAttribution();
         } catch (error) {
