@@ -190,21 +190,37 @@ function getPressbooksAttribution() {
 // Create and display attribution for an OpenStax resource
 function getOpenStaxAttribution() {
     let result = new Attribution(pageURL);
-    var pageTitleElement = doc.querySelector('[class^="BookBanner__BookChapter"]');
-    result.pageTitle = pageTitleElement.innerText;
-    console.log(result.pageTitle);
+    const pageTitleElement = doc.querySelector("h1.book-banner-chapter");
+    const bookTitleElement = doc.querySelector('meta[name="citation_book_title"][content]');
+    const bookLinkElement = doc.querySelector("a.book-banner-title-link[href]");
+    const authorElements = doc.querySelectorAll('meta[name="citation_author"][content]');
+    const licenseElement = doc.querySelector('[data-html="copyright"] a[href*="creativecommons.org"]');
+    const missingFields = [];
 
-    var bookTitleElement = doc.querySelector('[class^="BookBanner__BookTitleLink"]');
-    result.bookTitle = bookTitleElement.innerText;
-    result.bookURL = "https://openstax.org" + bookTitleElement.getAttribute("href");
-    console.log(result.bookTitle + " " + result.bookURL);
+    if (!pageTitleElement) missingFields.push("page title");
+    if (!bookTitleElement) missingFields.push("book title");
+    if (!bookLinkElement) missingFields.push("book URL");
+    if (authorElements.length === 0) missingFields.push("author");
+    if (!licenseElement) missingFields.push("license");
+    if (missingFields.length > 0) {
+        throw new Error(`Unable to extract OpenStax ${missingFields.join(", ")}.`);
+    }
 
-    var licenseElement = doc.querySelector('[data-html="copyright"] > a');
-    result.licenseType = licenseElement.innerText;
-    result.licenseURL = licenseElement.getAttribute("href");
-    console.log(result.licenseType + " " + result.licenseURL);
+    const normalizeText = (value) => value.replace(/\s+/g, " ").trim();
+    result.pageTitle = normalizeText(pageTitleElement.textContent);
+    result.bookTitle = bookTitleElement.getAttribute("content").trim();
+    result.bookURL = new URL(bookLinkElement.getAttribute("href"), pageURL).href;
 
-    result.author = "<a href='https://openstax.org/'>OpenStax - Rice University</a>";
+    const authors = Array.from(authorElements, (element) => element.getAttribute("content").trim()).filter(Boolean);
+    if (authors.length === 0) {
+        throw new Error("Unable to extract OpenStax author.");
+    }
+    result.author = authors.length === 1
+        ? authors[0]
+        : `${authors.slice(0, -1).join(", ")} & ${authors[authors.length - 1]}`;
+
+    result.licenseType = normalizeText(licenseElement.textContent);
+    result.licenseURL = new URL(licenseElement.getAttribute("href"), pageURL).href;
 
     return result;
 }
