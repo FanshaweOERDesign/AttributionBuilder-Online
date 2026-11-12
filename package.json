@@ -1,0 +1,19 @@
+{
+  "name": "attributionbuilder-online",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test:e2e": "cypress run"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0",
+    "cypress": "^14.5.4"
+  }
+}

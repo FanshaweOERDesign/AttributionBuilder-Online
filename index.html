@@ -28,17 +28,11 @@ SOFTWARE.
         <title>Attribution Builder</title>
         <meta author="Jason Benoit, David Giesbrecht, and Stephany Ceron" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <!--[if lt IE 9]>
-            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
-        <link rel="shortcut icon" href="images/oer_logo.ico" />
-
-        <link rel="stylesheet" href="style.css" />
-        <link rel="stylesheet" href="queries.css" />
-        <script src="script.js"></script>
+        <link rel="shortcut icon" href="./images/oer_logo.ico" />
+        <script type="module" src="./script.js"></script>
     </head>
 
-    <body onload="startup();">
+    <body>
         <main>
             <div class="wrap">
                 <div class="wrapper-header">
@@ -48,7 +42,7 @@ SOFTWARE.
                 <div class="wrap-content">
                     <div class="child">
                         <label for="targetURL">Resource URL</label>
-                        <input title="The resource could be a Pressbook, OpenStax, LibreText or YouTube video." type="text" id="targetURL" onfocus="this.select();" placeholder="Enter resource URL" maxLength="1000"/>
+                        <input title="The resource could be a Pressbook, OpenStax, LibreText or YouTube video." type="text" id="targetURL" placeholder="Enter resource URL" maxLength="1000"/>
                         <iframe id="pageFrame" style="display: none"></iframe>
                     </div>
                     <div id="customInputDiv" style="display: none">
@@ -75,7 +69,7 @@ SOFTWARE.
                         </div>
                     </div>
                     <div class="child">
-                        <button id="loadPageBtn" onClick="loadTargetPage();">Build Attribution</button>
+                        <button id="loadPageBtn">Build Attribution</button>
                     </div>
                     <div id="loading-dots" class="spinner-box" style="display: none">
                         <p>Work in progress</p>
@@ -94,14 +88,14 @@ SOFTWARE.
                     <div id="outputDiv" style="display: none" class="child">
                         <textarea disabled id="resultTxt" rows="4"></textarea>
                         <div>
-                            <button id="copyBtn" onclick="copy('resultTxt')">Copy to Clipboard</button>
+                            <button id="copyBtn">Copy to Clipboard</button>
                         </div>
                         <div id="resultTxtCopyRes"></div>
                     </div>
                 </div>
             </div>
             <div id="logo-div">
-                <img id="logo" src="images/oer_logo.png" />
+                <img id="logo" src="./images/oer_logo.png" />
             </div>
         </main>
 

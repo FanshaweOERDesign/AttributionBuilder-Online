@@ -1,3 +1,6 @@
+import "./style.css";
+import "./queries.css";
+
 var pageURL;
 var useCustomInput = false;
 const parser = new DOMParser();
@@ -409,14 +412,20 @@ function copy(id) {
 }
 
 function startup() {
-    document.getElementById("targetURL").addEventListener("keyup", (e) => {
+    const targetURLInput = document.getElementById("targetURL");
+    targetURLInput.addEventListener("focus", () => targetURLInput.select());
+    targetURLInput.addEventListener("keyup", (e) => {
         if (e.key == "Enter") {
             loadTargetPage();
         }
     });
+    document.getElementById("loadPageBtn").addEventListener("click", loadTargetPage);
+    document.getElementById("copyBtn").addEventListener("click", () => copy("resultTxt"));
 }
 
 // sets copyresult div back to it's default e.g. none.
 function clearCopiedMsg() {
     document.getElementById("resultTxtCopyRes").style.display = "";
 }
+
+startup();

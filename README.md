@@ -1,5 +1,19 @@
 # AttributionBuilder
 
+## Development
+
+Use Node.js `^20.19.0` or `>=22.12.0`. Install dependencies and start the Vite
+development server:
+
+```sh
+npm ci
+npm run dev
+```
+
+Create a production build in `dist/` with `npm run build`. Use `npm run preview`
+to serve that build locally. CI workflows can run `npm ci` and `npm run build`
+before launching an end-to-end test runner against the app.
+
 AttributionBuilder composes a standard attribution string for an online OER (**O**pen **E**ducation **R**esource), and is especially geared towards those resources available on the Pressbooks platform or through OpenStax. A [downloadable standalone version](https://github.com/FanshaweOERDesign/AttributionBuilder-Standalone/releases/tag/v1.4) and an [online version](https://fanshaweoerdesign.github.io/AttributionBuilder-Online/) are available. For Pressbooks and OpenStax resources, the AttributionBuider does all the work for you, turning this:
 
     https://ecampusontario.pressbooks.pub/fanshaweoerdesignstudio/chapter/open-initiative-at-fanshawe-college/
