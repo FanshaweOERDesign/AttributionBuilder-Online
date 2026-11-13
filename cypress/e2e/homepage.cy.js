@@ -49,7 +49,7 @@ describe("Homepage", () => {
 
   it("Works for YouTube (CI/CD)", () => {
   // Intercept the direct frontend call to Google's YouTube Data API
-  cy.intercept("GET", "**/*://googleapis.com**", {
+  cy.intercept("GET", /https:\/\/www\.googleapis\.com\/youtube\/v3\/videos.*/, {
     statusCode: 200,
     body: {
       items: [
