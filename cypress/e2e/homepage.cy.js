@@ -49,7 +49,7 @@ describe("Homepage", () => {
 
   it("Works for YouTube (CI/CD)", () => {
   // Intercept the direct frontend call to Google's YouTube Data API
-  cy.intercept("GET", "https://googleapis.com*", {
+  cy.intercept("GET", "**/*://googleapis.com**", {
     statusCode: 200,
     body: {
       items: [
@@ -68,7 +68,7 @@ describe("Homepage", () => {
     },
   }).as("youtubeApi");
 
-  cy.get("#targetURL").type("https://youtube.com");
+  cy.get("#targetURL").type("https://www.youtube.com/watch?v=EwTZ2xpQwpA&list=RDEwTZ2xpQwpA&start_radio=1");
   cy.get("#loadPageBtn").click();
 
   cy.wait("@youtubeApi");
