@@ -25,6 +25,3 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 // Get element by test-id attribute
-Cypress.Commands.add("getByTestId", (testId) => {
-  return cy.get(`[data-testid="${testId}"]`);
-});
