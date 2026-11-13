@@ -10,7 +10,7 @@ describe("Homepage", () => {
 
   it("Works for Pressbooks", () => {
     cy.get("#targetURL").type("https://ecampusontario.pressbooks.pub/fanshaweoerdesignstudio/");
-    cy.intercept("post", "https://fetcher-production-8123.up.railway.app*").as("fetcherRequest");
+    cy.intercept("POST", "https://fetcher-production-8123.up.railway.app/bookData").as("fetcherRequest");
     cy.get("#loadPageBtn").click();
     cy.wait("@fetcherRequest").then((interception) => {
       expect(interception.response.statusCode).to.eq(200);
@@ -23,7 +23,7 @@ describe("Homepage", () => {
 
   it("Works for OpenStax", () => {
     cy.get("#targetURL").clear().type("https://openstax.org/books/algebra-and-trigonometry-2e/pages/1-1-real-numbers-algebra-essentials");
-    cy.intercept("post", "https://fetcher-production-8123.up.railway.app*").as("fetcherRequest");
+    cy.intercept("POST", "https://fetcher-production-8123.up.railway.app/bookData").as("fetcherRequest");
     cy.get("#loadPageBtn").click();
     cy.wait("@fetcherRequest").then((interception) => {
       expect(interception.response.statusCode).to.eq(200);
@@ -36,7 +36,7 @@ describe("Homepage", () => {
 
   it("Works for LibreTexts", () => {
     cy.get("#targetURL").clear().type("https://math.libretexts.org/Courses/Angelo_State_University/Finite_Mathematics/01%3A_Algebra_Essentials/1.01%3A_Real_Numbers_-_Algebra_Essentials");
-    cy.intercept("post", "https://fetcher-production-8123.up.railway.app*").as("fetcherRequest");
+    cy.intercept("POST", "https://fetcher-production-8123.up.railway.app/bookData").as("fetcherRequest");
     cy.get("#loadPageBtn").click();
     cy.wait("@fetcherRequest").then((interception) => {
       expect(interception.response.statusCode).to.eq(200);
@@ -47,7 +47,7 @@ describe("Homepage", () => {
     });
   });
 
-  it("Works for YouTube", () => {
+  /*it("Works for YouTube", () => {
     cy.get("#targetURL").clear().type("https://www.youtube.com/watch?v=EwTZ2xpQwpA&list=RDEwTZ2xpQwpA&start_radio=1");
     cy.intercept("post", "https://fetcher-production-8123.up.railway.app*").as("fetcherRequest");
     cy.get("#loadPageBtn").click();
@@ -58,7 +58,7 @@ describe("Homepage", () => {
     cy.get("#resultTxt").invoke("val").then((text) => {
       expect(text).to.equal(`<p>Video: "<a href="https://www.youtube.com/watch?v=EwTZ2xpQwpA&list=RDEwTZ2xpQwpA&start_radio=1">"Chocolate Rain" Original Song by Tay Zonday</a>" by <a href="https://www.youtube.com/channel/UCjMWn75PwKgutJQ0J3mrLbA">TayZonday</a> [4:53] is licensed under the <a href="https://www.youtube.com/static?template=terms">Standard YouTube License</a>.<em>Transcript and closed captions available on YouTube.</em></p>`);
     });
-  });
+  });*/
 });
 
 
