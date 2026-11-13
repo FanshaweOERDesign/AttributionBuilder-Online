@@ -3,7 +3,7 @@ import { defineConfig } from "cypress";
 
 export default defineConfig({
   e2e: {
-    baseUrl: "https://github.io",
+    baseUrl: "https://fanshaweoerdesign.github.io/AttributionBuilder-Online/",
     specPattern: "cypress/smoke/**/*.smoke.js",
     supportFile: "cypress/support/smoke.js",
   },
