@@ -8,5 +8,5 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // Register Node-side event listeners here if needed.
     },
-  },
+  }
 });

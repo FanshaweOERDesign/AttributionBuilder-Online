@@ -6,9 +6,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  schedule:
-    # Runs every day at 08:00 UTC (3:00 AM EST / 4:00 AM EDT)
-    - cron: '0 8 * * *'
+  
   workflow_dispatch:
 
 permissions:

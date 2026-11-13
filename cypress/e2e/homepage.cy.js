@@ -47,18 +47,40 @@ describe("Homepage", () => {
     });
   });
 
-  /*it("Works for YouTube", () => {
-    cy.get("#targetURL").clear().type("https://www.youtube.com/watch?v=EwTZ2xpQwpA&list=RDEwTZ2xpQwpA&start_radio=1");
-    cy.intercept("post", "https://fetcher-production-8123.up.railway.app*").as("fetcherRequest");
-    cy.get("#loadPageBtn").click();
-    cy.wait("@fetcherRequest").then((interception) => {
-      expect(interception.response.statusCode).to.eq(200);
-    });
-    cy.get("#resultTxt").should("be.visible");
-    cy.get("#resultTxt").invoke("val").then((text) => {
-      expect(text).to.equal(`<p>Video: "<a href="https://www.youtube.com/watch?v=EwTZ2xpQwpA&list=RDEwTZ2xpQwpA&start_radio=1">"Chocolate Rain" Original Song by Tay Zonday</a>" by <a href="https://www.youtube.com/channel/UCjMWn75PwKgutJQ0J3mrLbA">TayZonday</a> [4:53] is licensed under the <a href="https://www.youtube.com/static?template=terms">Standard YouTube License</a>.<em>Transcript and closed captions available on YouTube.</em></p>`);
-    });
-  });*/
+  it("Works for YouTube (CI/CD)", () => {
+  // Intercept the direct frontend call to Google's YouTube Data API
+  cy.intercept("GET", "https://googleapis.com*", {
+    statusCode: 200,
+    body: {
+      items: [
+        {
+          id: "dQw4w9WgXcQ",
+          snippet: {
+            title: "Sample OER Video Title",
+            channelTitle: "Fanshawe OER Design Studio",
+          },
+          status: {
+            // Use "creativeCommon" if your app checks for CC-licensed videos, or "youtube" for standard
+            license: "creativeCommon",
+          },
+        },
+      ],
+    },
+  }).as("youtubeApi");
+
+  cy.get("#targetURL").type("https://youtube.com");
+  cy.get("#loadPageBtn").click();
+
+  cy.wait("@youtubeApi");
+
+  cy.get("#resultTxt").should("be.visible");
+  cy.get("#resultTxt").invoke("val").then((text) => {
+    expect(text).to.include("Sample OER Video Title");
+    expect(text).to.include("Fanshawe OER Design Studio");
+  });
 });
+
+});
+
 
 
