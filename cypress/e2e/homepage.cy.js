@@ -54,10 +54,14 @@ describe("Homepage", () => {
     body: {
       items: [
         {
-          id: "dQw4w9WgXcQ",
+          channelid: "dQw4w9WgXcQ",
+          id: "EwTZ2xpQwpA",
           snippet: {
             title: "Sample OER Video Title",
             channelTitle: "Fanshawe OER Design Studio",
+          },
+          contentDetails: {
+            duration: "PT4M53S",
           },
           status: {
             // Use "creativeCommon" if your app checks for CC-licensed videos, or "youtube" for standard
