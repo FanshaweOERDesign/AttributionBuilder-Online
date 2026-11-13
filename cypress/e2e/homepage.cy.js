@@ -1,7 +1,10 @@
 
 describe("Homepage", () => {
-  it("loads the starter page", () => {
+  beforeEach(() => {
     cy.visit("/");
+  });
+
+  it("loads the starter page", () => {
     cy.contains("h1", "AttributionBuilder").should("be.visible");
   });
 
