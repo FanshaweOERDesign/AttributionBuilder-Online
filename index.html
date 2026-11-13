@@ -42,7 +42,7 @@ SOFTWARE.
                 <div class="wrap-content">
                     <div class="child">
                         <label for="targetURL">Resource URL</label>
-                        <input title="The resource could be a Pressbook, OpenStax, LibreText or YouTube video." type="text" id="targetURL" placeholder="Enter resource URL" maxLength="1000"/>
+                        <input title="The resource could be a Pressbook, OpenStax, LibreText or YouTube video." data-testid="targetURL" type="text" id="targetURL" placeholder="Enter resource URL" maxLength="1000"/>
                         <iframe id="pageFrame" style="display: none"></iframe>
                     </div>
                     <div id="customInputDiv" style="display: none">
@@ -69,7 +69,7 @@ SOFTWARE.
                         </div>
                     </div>
                     <div class="child">
-                        <button id="loadPageBtn">Build Attribution</button>
+                        <button id="loadPageBtn" data-testid="loadPageBtn">Build Attribution</button>
                     </div>
                     <div id="loading-dots" class="spinner-box" style="display: none">
                         <p>Work in progress</p>
@@ -86,7 +86,7 @@ SOFTWARE.
                     </div>
 
                     <div id="outputDiv" style="display: none" class="child">
-                        <textarea disabled id="resultTxt" rows="4"></textarea>
+                        <textarea disabled id="resultTxt" data-testid="resultTxt" rows="4"></textarea>
                         <div>
                             <button id="copyBtn">Copy to Clipboard</button>
                         </div>
