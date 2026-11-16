@@ -117,13 +117,10 @@ function isPressbooks() {
     if (!doc) {
         return false;
     }
-    var elements = doc.getElementsByTagName("*");
-    for (let i = 0; i < elements.length; i++) {
-        let classes = elements[i].getAttribute("class");
 
-        if (classes && classes.includes("pressbooks")) {
-            return true;
-        }
+    var body = doc.getElementsByTagName("body")[0];
+    if (body && body.getAttribute("class") && body.classList.contains("wp-theme-pressbooks-book")) {
+        return true;
     }
     return false;
 }
