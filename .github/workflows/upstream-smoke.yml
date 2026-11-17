@@ -3,7 +3,7 @@ name: Upstream Schema Smoke Tests
 on:
   schedule:
     # Runs every day at 08:00 UTC (3:00 AM EST / 4:00 AM EDT)
-    - cron: '22 8 * * *'
+    - cron: '22 16 * * *'
 
   workflow_dispatch:
 
